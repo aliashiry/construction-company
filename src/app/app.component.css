@@ -1,0 +1,157 @@
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom glow effect for buttons */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f97316;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+/* Responsive mobile design optimizations */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px;
+  }
+
+  section {
+    padding: 3rem 1rem !important;
+  }
+
+  h1 {
+    font-size: 2.5rem !important;
+  }
+
+  h2 {
+    font-size: 2rem !important;
+  }
+}
+
+/* iPhone 16 Pro Max specific */
+@media (width: 430px) and (height: 932px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* Enhanced animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Touch-optimized interactions */
+button {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 12px;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+/* Dark mode optimization */
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High DPI/Retina displays */
+@media (min-device-pixel-ratio: 2) {
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Testimonial card styles */
+.testimonial-card {
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.testimonial-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+}
+.testimonial-card img {
+  border: 2px solid rgba(249,115,22,0.06);
+}
+
+/* Client card specific styles */
+.client-card {
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+.client-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
+  border-color: rgba(249,115,22,0.15);
+}
+.client-avatar {
+  border: 2px solid rgba(255,255,255,0.04);
+}
+.client-card h4 {
+  color: #ffffff;
+}
+.client-card p {
+  line-height: 1.25;
+}
+
+/* Navbar styles */
+nav { position: relative; }
+nav .backdrop-blur-md { backdrop-filter: blur(6px); }
+
+/* Footer placeholders */
+.footer-link { color: #cbd5e1; }
+.footer-link:hover { color: #ffffff; }
+
+@media (max-width: 768px) {
+  /* small spacing for navbar overlap */
+  .pt-20 { padding-top: 5rem; }
+}
