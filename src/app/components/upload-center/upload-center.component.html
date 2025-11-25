@@ -1,0 +1,32 @@
+<div class="upload-center-card" [class.dragging]="isDragging" [class.light-mode]="!isDarkTheme" [class.dark-mode]="isDarkTheme">
+  <h2 class="upload-center-title" [style.color]="isDarkTheme ? '#f97316' : '#ea580c'">
+    Upload Your Project Blueprint<br />
+    (Architectural Plans & Designs)
+  </h2>
+  <p class="upload-center-subtitle" [style.color]="isDarkTheme ? '#94a3b8' : '#6b7280'">Quick and seamless upload</p>
+  <div class="upload-center-icon">
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="16" width="40" height="32" rx="4" stroke="#f97316" stroke-width="3" fill="none"/>
+      <circle cx="20" cy="32" r="5" stroke="#f97316" stroke-width="2" fill="none"/>
+      <path d="M8 40 L20 30 L30 38 L40 26 L48 34" stroke="#f97316" stroke-width="2" fill="none"/>
+      <path d="M44 20 L52 12 M52 12 L52 20 M52 12 L44 12" stroke="#f97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <p class="upload-center-drag-text" [style.color]="isDarkTheme ? '#94a3b8' : '#6b7280'">Drag and drop your files here</p>
+  <input #fileInput type="file" accept="image/*,.pdf,.dwg,.dxf" (change)="onFileSelected($event)" hidden />
+  <button class="upload-center-button" (click)="triggerFileInput(fileInput)">
+    Upload Files
+  </button>
+  <p class="upload-center-success" *ngIf="uploadedFile">Uploaded: {{ uploadedFile.name }}</p>
+</div>
+
+<!-- Auth Modal -->
+<div class="upload-auth-modal-overlay" *ngIf="showAuthModal" (click)="closeModal()">
+  <div class="upload-auth-modal" (click)="$event.stopPropagation()">
+    <p class="upload-auth-modal-message">You must log in first to upload files.</p>
+    <div class="upload-auth-modal-buttons">
+      <button class="upload-auth-modal-btn upload-auth-modal-btn-login" (click)="goToLogin()">Login</button>
+      <button class="upload-auth-modal-btn upload-auth-modal-btn-register" (click)="goToRegister()">Register</button>
+    </div>
+  </div>
+</div>

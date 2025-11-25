@@ -1,0 +1,154 @@
+.upload-center-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 2.5rem 3rem;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 6px 30px rgba(2,6,23,0.06);
+  transition: border 0.2s;
+  border: 2px dashed transparent;
+
+  &.dragging {
+    border-color: #f97316;
+    background: #fff;
+  }
+
+  /* Dark mode only updates: background & subtle borders, keep design otherwise */
+  &.dark-mode {
+    background: #0b1220; /* slightly darker than main navy to preserve contrast */
+    border-color: rgba(255,255,255,0.03);
+    box-shadow: 0 10px 30px rgba(2,6,23,0.5);
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem;
+    max-width: 90%;
+  }
+}
+
+.upload-center-title {
+  color: #f97316;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.4;
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
+}
+
+.upload-center-subtitle {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.upload-center-icon {
+  margin: 1rem auto;
+  display: flex;
+  justify-content: center;
+}
+
+.upload-center-drag-text {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 1rem 0 1.5rem 0;
+}
+
+/* Dark mode text colors inside the upload card */
+.upload-center-card.dark-mode .upload-center-title,
+.upload-center-card.dark-mode .upload-center-subtitle,
+.upload-center-card.dark-mode .upload-center-drag-text {
+  color: rgba(255,255,255,0.9);
+}
+
+.upload-center-button {
+  display: inline-block;
+  background: #f97316;
+  color: #fff;
+  padding: 0.75rem 2rem;
+  border-radius: 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #ea580c;
+  }
+}
+
+.upload-center-success {
+  color: #16a34a;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+.upload-auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(2,6,23,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.upload-auth-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(2,6,23,0.08);
+}
+
+.upload-auth-modal-message {
+  color: #0f172a;
+  font-size: 1rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.upload-auth-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.upload-auth-modal-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.upload-auth-modal-btn-login {
+  background: #f97316;
+  color: #fff;
+
+  &:hover {
+    background: #ea580c;
+  }
+}
+
+.upload-auth-modal-btn-register {
+  background: #e6eef6;
+  color: #0f172a;
+
+  &:hover {
+    background: #d1e2f1;
+  }
+}
+
