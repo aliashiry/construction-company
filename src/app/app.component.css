@@ -9,7 +9,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -118,7 +118,7 @@ input:focus, textarea:focus {
 }
 .testimonial-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(2,6,23,0.6);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
 }
 .testimonial-card img {
   border: 2px solid rgba(249,115,22,0.06);
@@ -130,14 +130,14 @@ input:focus, textarea:focus {
 }
 .client-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(2,6,23,0.6);
-  border-color: rgba(249,115,22,0.15);
+  box-shadow: 0 18px 40px rgba(2,6,23,0.06);
+  border-color: rgba(249,115,22,0.08);
 }
 .client-avatar {
-  border: 2px solid rgba(255,255,255,0.04);
+  border: 2px solid rgba(15,23,42,0.06);
 }
 .client-card h4 {
-  color: #ffffff;
+  color: #0f172a;
 }
 .client-card p {
   line-height: 1.25;
@@ -148,8 +148,8 @@ nav { position: relative; }
 nav .backdrop-blur-md { backdrop-filter: blur(6px); }
 
 /* Footer placeholders */
-.footer-link { color: #cbd5e1; }
-.footer-link:hover { color: #ffffff; }
+.footer-link { color: #374151; }
+.footer-link:hover { color: #0f172a; }
 
 @media (max-width: 768px) {
   /* small spacing for navbar overlap */

@@ -1,0 +1,13 @@
+<div class="list-mode-container">
+  <div class="list-mode-item" *ngFor="let item of items">
+    <img [src]="item.image" [alt]="item.title" class="list-mode-image" />
+    <div class="list-mode-content">
+      <h3 class="list-mode-title">{{ item.title }}</h3>
+      <p class="list-mode-description">{{ item.description }}</p>
+      <button class="list-mode-button" (click)="onButtonClick(item)">
+        {{ item.buttonText || 'View Details' }}
+      </button>
+    </div>
+  </div>
+</div>
+

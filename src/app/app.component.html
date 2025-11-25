@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
+        <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-navy font-black">LOGO</div>
   <title>Premium Construction & Engineering | Building the Future</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,25 +19,29 @@
   </style>
 </head>
 
-<body class="min-h-screen bg-navy text-white" style="background-color: #0f172a;">
+<body class="min-h-screen" [style.background-color]="isDarkTheme ? '#0f172a' : '#f8fafc'" [style.color]="isDarkTheme ? '#ffffff' : '#0f172a'">
 
   <!-- Navbar -->
-  <nav class="fixed inset-x-0 top-0 z-50 bg-black/40 backdrop-blur-md">
+  <nav *ngIf="!isStandalonePage" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md" [style.background-color]="isDarkTheme ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.9)'">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-      <a href="#" class="flex items-center gap-3">
+        <a href="#" class="flex items-center gap-3" *ngIf="!isStandalonePage">
         <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-navy font-black">LOGO</div>
-        <span class="font-bold text-lg">BrandName</span>
+        <span class="font-bold text-lg" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">BrandName</span>
       </a>
 
       <div class="hidden md:flex items-center gap-8">
-        <a href="#" class="text-gray-200 hover:text-white">Home</a>
-        <a href="#" class="text-gray-200 hover:text-white">Services</a>
-        <a href="#projects" class="text-gray-200 hover:text-white">Projects</a>
-        <a href="#contact" class="text-gray-200 hover:text-white">Contact</a>
+        <a href="#" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'" class="hover:opacity-80">Home</a>
+        <a href="#" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'" class="hover:opacity-80">Services</a>
+        <a href="#projects" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'" class="hover:opacity-80">Projects</a>
+        <a href="#contact" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'" class="hover:opacity-80">Contact</a>
         <a href="#" class="ml-4 bg-orange text-navy px-4 py-2 rounded-full font-bold hover:shadow-glow">Get Quote</a>
+        <button (click)="toggleTheme()" class="ml-3 text-sm font-medium" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">
+          {{ isDarkTheme ? 'Light Mode' : 'Dark Mode' }}
+        </button>
+        <a routerLink="/login" class="ml-3 bg-white text-navy px-4 py-2 rounded-full font-bold border border-slate-200 hover:bg-slate-100">Login</a>
       </div>
 
-      <button class="md:hidden p-2 text-gray-200" (click)="toggleMenu()" aria-label="Toggle menu">
+      <button class="md:hidden p-2 text-navy" (click)="toggleMenu()" aria-label="Toggle menu">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -46,22 +50,24 @@
 
     <div *ngIf="menuOpen" class="md:hidden px-6 pb-4">
       <div class="flex flex-col gap-3">
-        <a href="#" class="block py-3 px-4 rounded text-gray-200 hover:bg-slate-800">Home</a>
-        <a href="#" class="block py-3 px-4 rounded text-gray-200 hover:bg-slate-800">Services</a>
-        <a href="#projects" class="block py-3 px-4 rounded text-gray-200 hover:bg-slate-800">Projects</a>
-        <a href="#contact" class="block py-3 px-4 rounded text-gray-200 hover:bg-slate-800">Contact</a>
+        <a href="#" class="block py-3 px-4 rounded text-navy hover:bg-slate-100">Home</a>
+        <a href="#" class="block py-3 px-4 rounded text-navy hover:bg-slate-100">Services</a>
+        <a href="#projects" class="block py-3 px-4 rounded text-navy hover:bg-slate-100">Projects</a>
+        <a href="#contact" class="block py-3 px-4 rounded text-navy hover:bg-slate-100">Contact</a>
         <a href="#" class="block py-3 px-4 rounded bg-orange text-navy text-center font-bold">Get Quote</a>
+        <a routerLink="/login" class="block py-3 px-4 rounded bg-white text-navy border border-slate-200 text-center font-bold hover:bg-slate-100">Login</a>
       </div>
     </div>
   </nav>
 
-  <div class="pt-20"></div>
+  <div class="pt-20" *ngIf="!isStandalonePage"></div>
 
+  <ng-container *ngIf="!isStandalonePage">
   <!-- Hero Section -->
   <section class="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
     <!-- Background Image with Overlay -->
     <div class="absolute inset-0">
-      <div class="absolute inset-0 bg-gradient-to-br from-navy via-black/80 to-navy z-20"></div>
+      <div class="absolute inset-0 z-20" [style.background]="isDarkTheme ? 'linear-gradient(to bottom right, rgba(0,0,0,0.8), rgba(0,0,0,0.5), rgba(0,0,0,0.8))' : 'linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,255,255,0.7), rgba(255,255,255,0.8))'"></div>
       <img src="https://images.unsplash.com/photo-1486398073761-c3bbc2250297?q=80&w=2232&fit=crop"
            class="w-full h-full object-cover opacity-50 z-10" alt="Modern Skyscraper Construction">
     </div>
@@ -75,11 +81,11 @@
 
     <!-- Hero Content -->
     <div class="relative z-30 text-center px-6 max-w-4xl mx-auto">
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-8 tracking-tight" style="color: #ffffff;">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-8 tracking-tight" [style.color]="isDarkTheme ? '#ffffff' : '#0f172a'">
         BUILDING THE FUTURE<br>
         <span style="color: #f97316;">ONE STRONG FOUNDATION AT A TIME.</span>
       </h1>
-      <p class="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+      <p class="text-lg md:text-xl mb-12 max-w-2xl mx-auto" [style.color]="isDarkTheme ? '#d1d5db' : '#6b7280'">
         Premium construction and engineering excellence for modern infrastructure
       </p>
       <button class="glow-orange bg-orange hover:bg-orange/90 text-white font-black text-lg px-8 py-5 md:px-12 md:py-7 rounded-full shadow-2xl transition transform hover:scale-105 duration-300">
@@ -89,66 +95,71 @@
   </section>
 
   <!-- Our Services Section -->
-  <section class="py-20 md:py-32 px-6 bg-gradient-to-b from-navy to-black">
+  <section class="py-20 md:py-32 px-6" [style.background]="isDarkTheme ? 'linear-gradient(to bottom, #0f172a, #000)' : 'linear-gradient(to bottom, #f1f5f9, #e2e8f0)'">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16 md:mb-20">
-        <h2 class="text-4xl md:text-5xl font-black mb-4">Our <span style="color: #f97316;">Services</span></h2>
+        <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Our <span style="color: #f97316;">Services</span></h2>
         <div class="w-20 h-1 mx-auto" style="background-color: #f97316;"></div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Planning & Design -->
-        <div class="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-2xl p-8 text-center hover:border-orange hover:bg-slate-900/80 transition duration-300">
+        <div class="backdrop-blur rounded-2xl p-8 text-center transition duration-300" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'">
           <div class="w-16 h-16 bg-orange/20 rounded-full mx-auto mb-6 flex items-center justify-center">
             <svg class="w-8 h-8" style="color: #f97316;" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 3H3v18h18V9h-6V3zm6 12h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2z"/>
             </svg>
           </div>
-          <h3 class="text-xl font-black mb-3">Planning & Design</h3>
-          <p class="text-gray-400 text-sm">Innovative architectural and structural designs for modern excellence</p>
+          <h3 class="text-xl font-black mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Planning & Design</h3>
+          <p class="text-sm" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Innovative architectural and structural designs for modern excellence</p>
         </div>
 
         <!-- Construction Execution -->
-        <div class="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-2xl p-8 text-center hover:border-orange hover:bg-slate-900/80 transition duration-300">
+        <div class="backdrop-blur rounded-2xl p-8 text-center transition duration-300" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'">
           <div class="w-16 h-16 bg-orange/20 rounded-full mx-auto mb-6 flex items-center justify-center">
             <svg class="w-8 h-8" style="color: #f97316;" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
           </div>
-          <h3 class="text-xl font-black mb-3">Construction Execution</h3>
-          <p class="text-gray-400 text-sm">Complete project execution with highest quality standards</p>
+          <h3 class="text-xl font-black mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Construction Execution</h3>
+          <p class="text-sm" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Complete project execution with highest quality standards</p>
         </div>
 
         <!-- Plumbing & Electrical -->
-        <div class="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-2xl p-8 text-center hover:border-orange hover:bg-slate-900/80 transition duration-300">
+        <div class="backdrop-blur rounded-2xl p-8 text-center transition duration-300" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'">
           <div class="w-16 h-16 bg-orange/20 rounded-full mx-auto mb-6 flex items-center justify-center">
             <svg class="w-8 h-8" style="color: #f97316;" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
             </svg>
           </div>
-          <h3 class="text-xl font-black mb-3">Plumbing & Electrical</h3>
-          <p class="text-gray-400 text-sm">Professional installations with 100% safety compliance</p>
+          <h3 class="text-xl font-black mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Plumbing & Electrical</h3>
+          <p class="text-sm" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Professional installations with 100% safety compliance</p>
         </div>
 
         <!-- Material Procurement -->
-        <div class="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-2xl p-8 text-center hover:border-orange hover:bg-slate-900/80 transition duration-300">
+        <div class="backdrop-blur rounded-2xl p-8 text-center transition duration-300" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'">
           <div class="w-16 h-16 bg-orange/20 rounded-full mx-auto mb-6 flex items-center justify-center">
             <svg class="w-8 h-8" style="color: #f97316;" fill="currentColor" viewBox="0 0 24 24">
               <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-. 9-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zM8 4v2h8V4H8zm0 6h12V6H8v4zm6-6h2V2h-2v2z"/>
             </svg>
           </div>
-          <h3 class="text-xl font-black mb-3">Material Procurement</h3>
-          <p class="text-gray-400 text-sm">Premium materials with guaranteed quality and best pricing</p>
+          <h3 class="text-xl font-black mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Material Procurement</h3>
+          <p class="text-sm" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Premium materials with guaranteed quality and best pricing</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Upload Center Section -->
+  <section style="padding: 5rem 1.5rem; display: flex; align-items: center; justify-content: center;" [ngClass]="isDarkTheme ? 'bg-dark' : 'bg-light'">
+    <app-upload-center [isDarkTheme]="isDarkTheme" (fileSelected)="onFileSelected($event)"></app-upload-center>
+  </section>
+
   <!-- Featured Projects Section -->
-  <section class="py-20 md:py-32 px-6 bg-gradient-to-b from-black to-navy">
+  <section class="py-20 md:py-32 px-6" [ngClass]="isDarkTheme ? 'bg-dark-gradient-2' : 'bg-light-gradient-2'">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16 md:mb-20">
-        <h2 class="text-4xl md:text-5xl font-black mb-4">Featured <span style="color: #f97316;">Projects</span></h2>
+        <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Featured <span style="color: #f97316;">Projects</span></h2>
         <div class="w-20 h-1 mx-auto" style="background-color: #f97316;"></div>
       </div>
 
@@ -157,9 +168,9 @@
         <div class="group relative overflow-hidden rounded-2xl h-80 md:h-96">
           <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2400&fit=crop"
                class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Modern Tower">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+          <div class="absolute inset-0" [style.background]="isDarkTheme ? 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)' : 'linear-gradient(to top, rgba(255,255,255,0.8), transparent)'"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-            <h3 class="text-2xl md:text-3xl font-black mb-2">Modern Tower Complex</h3>
+            <h3 class="text-2xl md:text-3xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Modern Tower Complex</h3>
             <p class="text-orange font-semibold mb-4">Dubai, UAE</p>
             <button class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-2 rounded-full transition transform hover:scale-105">
               Learn More
@@ -171,9 +182,9 @@
         <div class="group relative overflow-hidden rounded-2xl h-80 md:h-96">
           <img src="https://images.pexels.com/photos/3852457/pexels-photo-3852457.jpeg?auto=compress&cs=tinysrgb&w=2000&h=2000&dpr=1"
                class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Residential Complex">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+          <div class="absolute inset-0" [style.background]="isDarkTheme ? 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)' : 'linear-gradient(to top, rgba(255,255,255,0.8), transparent)'"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-            <h3 class="text-2xl md:text-3xl font-black mb-2">Luxury Residences</h3>
+            <h3 class="text-2xl md:text-3xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Luxury Residences</h3>
             <p class="text-orange font-semibold mb-4">Cairo, Egypt</p>
             <button class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-2 rounded-full transition transform hover:scale-105">
               Learn More
@@ -185,9 +196,9 @@
         <div class="group relative overflow-hidden rounded-2xl h-80 md:h-96">
           <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2400&fit=crop"
                class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Commercial Space">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+          <div class="absolute inset-0" [style.background]="isDarkTheme ? 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)' : 'linear-gradient(to top, rgba(255,255,255,0.8), transparent)'"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-            <h3 class="text-2xl md:text-3xl font-black mb-2">Commercial Hub</h3>
+            <h3 class="text-2xl md:text-3xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Commercial Hub</h3>
             <p class="text-orange font-semibold mb-4">Abu Dhabi, UAE</p>
             <button class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-2 rounded-full transition transform hover:scale-105">
               Learn More
@@ -199,10 +210,10 @@
   </section>
 
   <!-- Our Value Proposition Section -->
-  <section class="py-20 md:py-32 px-6 bg-gradient-to-b from-navy to-black">
+  <section class="py-20 md:py-32 px-6" [ngClass]="isDarkTheme ? 'bg-dark-gradient-1' : 'bg-light-gradient-1'">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16 md:mb-20">
-        <h2 class="text-4xl md:text-5xl font-black mb-4">Our Value <span style="color: #f97316;">Proposition</span></h2>
+        <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Our Value <span style="color: #f97316;">Proposition</span></h2>
         <div class="w-20 h-1 mx-auto" style="background-color: #f97316;"></div>
       </div>
 
@@ -213,8 +224,8 @@
             <img src="https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=2000&h=2000&dpr=1"
                  class="w-full h-full object-cover" alt="Expert Architects">
           </div>
-          <h3 class="text-2xl font-black mb-2">20+ Years of Excellence</h3>
-          <p class="text-gray-400 text-center">Industry-leading expertise in premium construction</p>
+          <h3 class="text-2xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">20+ Years of Excellence</h3>
+          <p class="text-center" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Industry-leading expertise in premium construction</p>
         </div>
 
         <!-- Sustainable Building Practices -->
@@ -223,8 +234,8 @@
             <img src="https://images.unsplash.com/photo-1519452575417-564c1401ecc0?q=80&w=2400&fit=crop"
                  class="w-full h-full object-cover" alt="Green Building">
           </div>
-          <h3 class="text-2xl font-black mb-2">Sustainable Practices</h3>
-          <p class="text-gray-400 text-center">Eco-friendly & energy-efficient construction solutions</p>
+          <h3 class="text-2xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Sustainable Practices</h3>
+          <p class="text-center" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Eco-friendly & energy-efficient construction solutions</p>
         </div>
 
         <!-- Award-Winning Designs -->
@@ -233,8 +244,8 @@
             <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2400&fit=crop"
                  class="w-full h-full object-cover" alt="Awards">
           </div>
-          <h3 class="text-2xl font-black mb-2">Award-Winning Designs</h3>
-          <p class="text-gray-400 text-center">Internationally recognized for architectural excellence</p>
+          <h3 class="text-2xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Award-Winning Designs</h3>
+          <p class="text-center" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Internationally recognized for architectural excellence</p>
         </div>
       </div>
     </div>
@@ -243,71 +254,71 @@
   <!-- Our Trusted Clients Section -->
 
   <!-- Client Testimonials -->
-  <section class="py-20 md:py-32 px-6 bg-gradient-to-b from-navy to-black">
+  <section class="py-20 md:py-32 px-6" [ngClass]="isDarkTheme ? 'bg-dark-gradient-1' : 'bg-light-gradient-2'">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16 md:mb-20">
-        <h2 class="text-4xl md:text-5xl font-black mb-4">What <span style="color: #f97316;">Our Clients</span> Say</h2>
+        <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">What <span style="color: #f97316;">Our Clients</span> Say</h2>
         <div class="w-20 h-1 mx-auto" style="background-color: #f97316;"></div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Testimonial 1 -->
-        <div class="testimonial-card bg-slate-900/60 rounded-2xl p-6 flex gap-4 items-start">
+        <div class="testimonial-card rounded-2xl p-6 flex gap-4 items-start" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? 'none' : '1px solid #e2e8f0'">
           <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1" alt="Client 1" class="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-md">
           <div>
-            <h4 class="text-lg font-bold">Amir Khalid</h4>
-            <p class="text-sm text-gray-400 mb-3">CEO, Premium Corp</p>
-            <p class="text-gray-200 italic">"Great service — delivered on time with impeccable quality."</p>
+            <h4 class="text-lg font-bold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Amir Khalid</h4>
+            <p class="text-sm mb-3" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">CEO, Premium Corp</p>
+            <p class="italic" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">"Great service — delivered on time with impeccable quality."</p>
           </div>
         </div>
 
         <!-- Testimonial 2 -->
-        <div class="testimonial-card bg-slate-900/60 rounded-2xl p-6 flex gap-4 items-start">
+        <div class="testimonial-card rounded-2xl p-6 flex gap-4 items-start" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? 'none' : '1px solid #e2e8f0'">
           <img src="https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1" alt="Client 2" class="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-md">
           <div>
-            <h4 class="text-lg font-bold">Lina Mansour</h4>
-            <p class="text-sm text-gray-400 mb-3">COO, Global Build</p>
-            <p class="text-gray-200 italic">"Very professional experience — highly recommended."</p>
+            <h4 class="text-lg font-bold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Lina Mansour</h4>
+            <p class="text-sm mb-3" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">COO, Global Build</p>
+            <p class="italic" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">"Very professional experience — highly recommended."</p>
           </div>
         </div>
 
         <!-- Testimonial 3 -->
-        <div class="testimonial-card bg-slate-900/60 rounded-2xl p-6 flex gap-4 items-start">
+        <div class="testimonial-card rounded-2xl p-6 flex gap-4 items-start" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? 'none' : '1px solid #e2e8f0'">
           <img src="https://images.pexels.com/photos/3771092/pexels-photo-3771092.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1" alt="Client 3" class="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-md">
           <div>
-            <h4 class="text-lg font-bold">Omar Nassar</h4>
-            <p class="text-sm text-gray-400 mb-3">Founder, Elite Homes</p>
-            <p class="text-gray-200 italic">"Exceptional attention to detail and clear communication."</p>
+            <h4 class="text-lg font-bold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Omar Nassar</h4>
+            <p class="text-sm mb-3" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Founder, Elite Homes</p>
+            <p class="italic" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">"Exceptional attention to detail and clear communication."</p>
           </div>
         </div>
 
         <!-- Testimonial 4 -->
-        <div class="testimonial-card bg-slate-900/60 rounded-2xl p-6 flex gap-4 items-start">
+        <div class="testimonial-card rounded-2xl p-6 flex gap-4 items-start" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? 'none' : '1px solid #e2e8f0'">
           <img src="https://images.pexels.com/photos/3975517/pexels-photo-3975517.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1" alt="Client 4" class="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-md">
           <div>
-            <h4 class="text-lg font-bold">Sara El-Gohary</h4>
-            <p class="text-sm text-gray-400 mb-3">Director, Urban Dev</p>
-            <p class="text-gray-200 italic">"Transparent process and outstanding execution."</p>
+            <h4 class="text-lg font-bold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Sara El-Gohary</h4>
+            <p class="text-sm mb-3" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Director, Urban Dev</p>
+            <p class="italic" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">"Transparent process and outstanding execution."</p>
           </div>
         </div>
 
         <!-- Testimonial 5 -->
-        <div class="testimonial-card bg-slate-900/60 rounded-2xl p-6 flex gap-4 items-start">
+        <div class="testimonial-card rounded-2xl p-6 flex gap-4 items-start" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? 'none' : '1px solid #e2e8f0'">
           <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1" alt="Client 5" class="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-md">
           <div>
-            <h4 class="text-lg font-bold">Hassan Youssef</h4>
-            <p class="text-sm text-gray-400 mb-3">Head of Procurement, Metro Arch</p>
-            <p class="text-gray-200 italic">"Reliable partners who prioritize quality materials."</p>
+            <h4 class="text-lg font-bold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Hassan Youssef</h4>
+            <p class="text-sm mb-3" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Head of Procurement, Metro Arch</p>
+            <p class="italic" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">"Reliable partners who prioritize quality materials."</p>
           </div>
         </div>
 
         <!-- Testimonial 6 -->
-        <div class="testimonial-card bg-slate-900/60 rounded-2xl p-6 flex gap-4 items-start">
+        <div class="testimonial-card rounded-2xl p-6 flex gap-4 items-start" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? 'none' : '1px solid #e2e8f0'">
           <img src="https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=1" alt="Client 6" class="w-16 h-16 rounded-full object-cover flex-shrink-0 shadow-md">
           <div>
-            <h4 class="text-lg font-bold">Nadia Farouk</h4>
-            <p class="text-sm text-gray-400 mb-3">Partner, Vision Eng</p>
-            <p class="text-gray-200 italic">"A top-tier team delivering measurable results."</p>
+            <h4 class="text-lg font-bold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Nadia Farouk</h4>
+            <p class="text-sm mb-3" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Partner, Vision Eng</p>
+            <p class="italic" [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">"A top-tier team delivering measurable results."</p>
           </div>
         </div>
       </div>
@@ -316,28 +327,28 @@
 
   <!-- Contact Form Section -->
   <section class="py-20 md:py-32 px-6 relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-black to-navy"></div>
+    <div class="absolute inset-0" [ngClass]="isDarkTheme ? 'bg-dark-gradient-2' : 'bg-light-gradient-2'"></div>
     <div class="absolute inset-0 opacity-20">
       <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2400"
            class="w-full h-full object-cover" alt="City Skyline">
     </div>
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent"></div>
+    <div class="absolute inset-0" [style.background]="isDarkTheme ? 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)' : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(255,255,255,0.6), transparent)'"></div>
 
     <div class="relative z-10 max-w-3xl mx-auto">
       <div class="text-center mb-12">
-        <h2 class="text-4xl md:text-5xl font-black mb-4">Ready to Start Your <span style="color: #f97316;">Project?</span></h2>
-        <p class="text-gray-300 text-lg">Let's discuss your construction and engineering needs</p>
+        <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Ready to Start Your <span style="color: #f97316;">Project?</span></h2>
+        <p class="text-lg" [style.color]="isDarkTheme ? '#d1d5db' : '#6b7280'">Let's discuss your construction and engineering needs</p>
       </div>
 
       <form class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <input type="text" placeholder="Your Name"
-          class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange focus:outline-none transition">
+          class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
         <input type="tel" placeholder="Phone Number"
-          class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange focus:outline-none transition">
+          class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
         <input type="text" placeholder="City"
-          class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange focus:outline-none transition">
+          class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
         <input type="text" placeholder="Project Type"
-          class="bg-slate-900/60 backdrop-blur border border-slate-700 rounded-xl px-6 py-4 text-white placeholder-gray-500 focus:border-orange focus:outline-none transition">
+          class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition" [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'" [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
         <button type="submit"
           class="glow-orange sm:col-span-2 bg-orange hover:bg-orange/90 text-white font-black text-lg py-5 rounded-full shadow-2xl transition transform hover:scale-105 duration-300">
           SEND REQUEST
@@ -347,20 +358,20 @@
   </section>
 
   <!-- Footer (customizable placeholders) -->
-  <footer class="bg-black/60 border-t border-slate-800 py-12">
+  <footer *ngIf="!isStandalonePage" class="py-12" [ngClass]="isDarkTheme ? 'bg-dark-semi' : 'bg-light-footer'" [style.border-top]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div>
+        <div *ngIf="!isStandalonePage">
         <a href="#" class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-navy font-black">LOGO</div>
-          <span class="font-bold text-lg">BrandName</span>
+          <span class="font-bold text-lg" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">BrandName</span>
         </a>
-        <p class="text-gray-400">Placeholder company description. Replace with your content to describe the company briefly.</p>
+        <p [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Placeholder company description. Replace with your content to describe the company briefly.</p>
       </div>
 
       <div class="flex justify-between">
         <div>
-          <h5 class="text-white font-bold mb-3">Quick Links</h5>
-          <ul class="space-y-2 text-gray-400">
+          <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Quick Links</h5>
+          <ul class="space-y-2" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">
             <li><a href="#">Home</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#projects">Projects</a></li>
@@ -368,25 +379,28 @@
           </ul>
         </div>
         <div>
-          <h5 class="text-white font-bold mb-3">Contact</h5>
-          <p class="text-gray-400">Phone: +1 234 567 890</p>
-          <p class="text-gray-400">Email: info&#64;example.com</p>
+          <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Contact</h5>
+          <p [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Phone: +1 234 567 890</p>
+          <p [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Email: info&#64;example.com</p>
         </div>
       </div>
 
       <div>
-        <h5 class="text-white font-bold mb-3">Follow Us</h5>
+        <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Follow Us</h5>
         <div class="flex gap-3">
-          <div class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-gray-400">F</div>
-          <div class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-gray-400">T</div>
-          <div class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-gray-400">L</div>
+          <div class="w-10 h-10 rounded flex items-center justify-center" [style.background]="isDarkTheme ? '#1e293b' : '#e2e8f0'" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">F</div>
+          <div class="w-10 h-10 rounded flex items-center justify-center" [style.background]="isDarkTheme ? '#1e293b' : '#e2e8f0'" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">T</div>
+          <div class="w-10 h-10 rounded flex items-center justify-center" [style.background]="isDarkTheme ? '#1e293b' : '#e2e8f0'" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">L</div>
         </div>
-        <div class="mt-6 text-gray-400 text-sm">Address: 123 Example St, City, Country</div>
+        <div class="mt-6 text-sm" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Address: 123 Example St, City, Country</div>
       </div>
     </div>
 
-    <div class="text-center text-gray-500 mt-8">© 2025 Premium Construction & Engineering. All rights reserved.</div>
+    <div class="text-center mt-8" [style.color]="isDarkTheme ? '#6b7280' : '#9ca3af'">© 2025 Premium Construction & Engineering. All rights reserved.</div>
   </footer>
+  </ng-container>
+
+  <router-outlet></router-outlet>
 
 </body>
 
