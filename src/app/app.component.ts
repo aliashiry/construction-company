@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { UploadCenterComponent } from './components/upload-center/upload-center.component';
@@ -9,9 +11,9 @@ import { UploadCenterComponent } from './components/upload-center/upload-center.
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, UploadCenterComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Premium Construction & Engineering';
   menuOpen = false;
   // Default theme: light
@@ -19,34 +21,30 @@ export class AppComponent implements OnInit {
   // Hide navbar/footer for standalone pages (login/register)
   isStandalonePage = false;
 
+  private readonly destroy$ = new Subject<void>();
+
   ngOnInit() {
     // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = 'smooth';
     this.applyTheme();
     // Track route changes and determine whether current route is a standalone page
     // (login or register) so we can hide navbar/footer
-    // Router may not be available during SSR compile; guard with optional chaining.
-    if ((this as any).router instanceof Router || (this as any).router) {
-      // handled in constructor now
-    }
-  }
-
-  constructor(private router: Router) {
-    // On route changes, set isStandalonePage to true when navigating to /login or /register
-    this.router.events.subscribe(event => {
+    // Subscriptions handled here and cleaned up in OnDestroy.
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
       if (event instanceof NavigationEnd) {
         let path = event.urlAfterRedirects || event.url;
         if (!path) path = location.pathname || '';
         // Remove hash and query params
         path = path.split('#').pop() || path;
         path = path.split('?')[0];
-        // Match /login, /login/, /register, /register/ etc.
         const standalone = /^\/?(login|register)(\/|$)/i.test(path);
         this.isStandalonePage = standalone;
       }
     });
+  }
 
-    // Initialize state (for direct loads)
+  constructor(private router: Router) {
+    // Initialize state for direct loads
     let initPath = this.router.url || location.pathname || '';
     initPath = initPath.split('#').pop() || initPath;
     initPath = initPath.split('?')[0];
@@ -60,6 +58,11 @@ export class AppComponent implements OnInit {
   toggleTheme() {
     this.isDarkTheme = !this.isDarkTheme;
     this.applyTheme();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   applyTheme() {

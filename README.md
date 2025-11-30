@@ -16,7 +16,8 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+There are currently no unit tests configured for this project.
+If you want to add unit tests, consider adding a test runner such as Jest/Vitest and a framework for unit tests.
 
 ## Running end-to-end tests
 

@@ -1,13 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ListItem } from '../../interfaces/list-item.interface';
+import { ListItem } from '../../interfaces';
 
 @Component({
   selector: 'app-list-mode',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './list-mode.component.html',
-  styleUrl: './list-mode.component.scss'
+  styleUrls: ['./list-mode.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListModeComponent {
   @Input() items: ListItem[] = [];

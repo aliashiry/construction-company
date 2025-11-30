@@ -7,7 +7,7 @@ import { UploadCenterComponent } from '../../components/upload-center/upload-cen
   standalone: true,
   imports: [CommonModule, UploadCenterComponent],
   templateUrl: './upload.component.html',
-  styleUrl: './upload.component.scss'
+  styleUrls: ['./upload.component.scss']
 })
 export class UploadPageComponent {
   selectedFile: File | null = null;

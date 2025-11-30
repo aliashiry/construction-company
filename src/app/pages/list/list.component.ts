@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListModeComponent } from '../../components/list-mode/list-mode.component';
-import { ListItem } from '../../interfaces/list-item.interface';
+import { ListItem } from '../../interfaces';
 
 @Component({
   selector: 'app-list-page',
   standalone: true,
   imports: [CommonModule, ListModeComponent],
   templateUrl: './list.component.html',
-  styleUrl: './list.component.scss'
+  styleUrls: ['./list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListPageComponent {
   items: ListItem[] = [

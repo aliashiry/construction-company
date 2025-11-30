@@ -1,14 +1,15 @@
-import { Component, Output, EventEmitter, HostListener, Input } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services';
 
 @Component({
   selector: 'app-upload-center',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './upload-center.component.html',
-  styleUrl: './upload-center.component.scss'
+  styleUrls: ['./upload-center.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadCenterComponent {
   @Input() isDarkTheme = true;
