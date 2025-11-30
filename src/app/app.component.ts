@@ -5,11 +5,12 @@ import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { UploadCenterComponent } from './components/upload-center/upload-center.component';
+import { ListModeComponent } from "./components/list-mode/list-mode.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, UploadCenterComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, UploadCenterComponent, ListModeComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

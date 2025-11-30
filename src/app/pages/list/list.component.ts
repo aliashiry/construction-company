@@ -9,6 +9,7 @@ import { ListItem } from '../../interfaces';
   imports: [CommonModule, ListModeComponent],
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
+
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListPageComponent {
