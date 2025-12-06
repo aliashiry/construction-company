@@ -161,9 +161,25 @@ nav .backdrop-blur-md { backdrop-filter: blur(6px); }
 }
 .Service-section:hover{
   opacity: 0.9;
-  transform: translateY(-7px);
-  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+  box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2);
 }
+
+/* Service card animation */
+@keyframes serviceCardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service-card-animate {
+  animation: serviceCardSlideUp 0.6s ease-out backwards;
+}
+
 .Feature-future{
   cursor: not-allowed !important;
 }
@@ -171,4 +187,34 @@ nav .backdrop-blur-md { backdrop-filter: blur(6px); }
   opacity: 0.6;
   transform: none !important;
   box-shadow: none !important;
+}
+
+/* Scroll indicator animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.scroll-indicator {
+  animation: bounce 2s infinite;
+}
+
+/* User info section animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+section[class*="User Info"] {
+  animation: fadeInScale 0.5s ease-out;
 }

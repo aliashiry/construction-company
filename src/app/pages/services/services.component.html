@@ -1,0 +1,22 @@
+<div class="services-page">
+    <div class="services-hero">
+        <h1 class="services-title">Our <span class="highlight">Services</span></h1>
+        <p class="services-subtitle">Comprehensive construction solutions for your every need</p>
+    </div>
+
+    <div class="services-container">
+        <div class="services-grid">
+            <div class="service-card" *ngFor="let service of services; let i = index"
+                [style.animation-delay]="i * 0.1 + 's'">
+                <div class="service-icon-wrapper">
+                    <svg class="service-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path [attr.d]="service.icon" />
+                    </svg>
+                </div>
+                <h3 class="service-title">{{ service.title }}</h3>
+                <p class="service-description">{{ service.description }}</p>
+                <button class="service-button" (click)="goToUpload()">Get Started</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -10,5 +10,5 @@ export const THEME = {
 };
 
 export const API = {
-  BASE_URL: 'https://localhost:7254/api'
+  BASE_URL: 'http://mepboq.runasp.net/api'
 };

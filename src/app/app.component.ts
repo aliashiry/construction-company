@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { UploadCenterComponent } from './components/upload-center/upload-center.component';
 import { ListModeComponent } from "./components/list-mode/list-mode.component";
+import { AuthService } from './services/auth.service';
+import { User } from './interfaces/user.interface';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +23,11 @@ export class AppComponent implements OnInit, OnDestroy {
   isDarkTheme = false;
   // Hide navbar/footer for standalone pages (login/register)
   isStandalonePage = false;
+  // Authentication state
+  currentUser: User | null = null;
+  isLoggedIn = false;
+  // Active tab tracking
+  activeTab: string = 'home';
 
   private readonly destroy$ = new Subject<void>();
 
@@ -28,6 +35,13 @@ export class AppComponent implements OnInit, OnDestroy {
     // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = 'smooth';
     this.applyTheme();
+    
+    // Subscribe to authentication state
+    this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+      this.currentUser = user;
+      this.isLoggedIn = !!user;
+    });
+    
     // Track route changes and determine whether current route is a standalone page
     // (login or register) so we can hide navbar/footer
     // Subscriptions handled here and cleaned up in OnDestroy.
@@ -38,18 +52,38 @@ export class AppComponent implements OnInit, OnDestroy {
         // Remove hash and query params
         path = path.split('#').pop() || path;
         path = path.split('?')[0];
-        const standalone = /^\/?(login|register)(\/|$)/i.test(path);
+        const standalone = /^\/?(login|register|profile|upload-data)(\/|$)/i.test(path);
         this.isStandalonePage = standalone;
+        
+        // Update active tab based on route
+        this.updateActiveTab(path);
       }
     });
   }
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     // Initialize state for direct loads
     let initPath = this.router.url || location.pathname || '';
     initPath = initPath.split('#').pop() || initPath;
     initPath = initPath.split('?')[0];
-    this.isStandalonePage = /^\/?(login|register)(\/|$)/i.test(initPath);
+    this.isStandalonePage = /^\/?(login|register|profile|upload-data)(\/|$)/i.test(initPath);
+    this.updateActiveTab(initPath);
+  }
+
+  updateActiveTab(path: string) {
+    if (path === '/' || path === '') {
+      this.activeTab = 'home';
+    } else if (path.includes('services')) {
+      this.activeTab = 'services';
+    } else if (path.includes('contact')) {
+      this.activeTab = 'contact';
+    } else {
+      this.activeTab = '';
+    }
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
   }
 
   toggleMenu() {
@@ -84,5 +118,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   openForm(){
     this.router.navigate(['/upload-data']);
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/profile']);
+  }
+
+  getUserInitials(): string {
+    if (!this.currentUser?.name) return 'U';
+    const names = this.currentUser.name.split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[1][0]).toUpperCase();
+    }
+    return this.currentUser.name[0].toUpperCase();
   }
 }

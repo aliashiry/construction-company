@@ -18,6 +18,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent)
   },
   {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+  },
+  {
+    path: 'services',
+    loadComponent: () => import('./pages/services/services.component').then(m => m.ServicesComponent)
+  },
+  {
     path: 'upload-data',
     loadComponent: () => import('./components/upload-file/upload-file.component').then(m => m.UploadFileComponent)
   }

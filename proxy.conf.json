@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "http://mepboq.runasp.net",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

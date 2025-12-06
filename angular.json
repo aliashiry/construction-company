@@ -57,6 +57,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "construction-company:build:production"
@@ -72,7 +75,7 @@
         },
         "deploy": {
           "builder": "angular-cli-ghpages:deploy"
-        },
+        }
 
       }
     }
