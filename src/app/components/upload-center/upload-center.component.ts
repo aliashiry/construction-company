@@ -2,11 +2,12 @@ import { Component, Output, EventEmitter, HostListener, Input, ChangeDetectionSt
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services';
+import { UploadService } from '../../services/upload.service';
 
 @Component({
   selector: 'app-upload-center',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './upload-center.component.html',
   styleUrls: ['./upload-center.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -18,7 +19,10 @@ export class UploadCenterComponent {
   showAuthModal = false;
   uploadedFile: File | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService,
+    private router: Router,
+    private uploadService: UploadService
+  ) { }
 
   triggerFileInput(fileInput: HTMLInputElement) {
     if (this.authService.isLoggedIn()) {
@@ -32,10 +36,27 @@ export class UploadCenterComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.uploadedFile = input.files[0];
+
+      // Store file in UploadService
+      this.uploadService.setFileStorage({
+        UserID: 123, // from auth for login user
+        ProjectName: '',
+        FileName: input.files[0].name,
+        InputFileData: input.files[0],
+        Notes: ''
+      });
+
       this.fileSelected.emit(input.files[0]);
+      this.upload();
     }
   }
 
+
+  // For remove item form upload section
+  removeFile() {
+    this.uploadedFile = null;
+    this.uploadService.clearFile();
+  }
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -61,9 +82,37 @@ export class UploadCenterComponent {
     }
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       this.uploadedFile = event.dataTransfer.files[0];
+
+      this.uploadService.setFileStorage({
+        UserID: 123,
+        ProjectName: '',
+        FileName: event.dataTransfer.files[0].name,
+        InputFileData: event.dataTransfer.files[0],
+        Notes: ''
+      });
+
       this.fileSelected.emit(event.dataTransfer.files[0]);
+      this.upload();
     }
+
   }
+
+  // Upload FIle To service 
+  upload() {
+    // if upload section remove item , remove file form service 
+    if (!this.uploadedFile) {
+      this.uploadService.clearFile();
+      return;
+    }
+
+    this.uploadService.uploadFile(this.uploadedFile).subscribe({
+      next: (res) => console.log('File uploaded successfully', res),
+      error: (err) => console.error('Upload failed', err)
+    });
+  }
+
+
+
 
   closeModal() {
     this.showAuthModal = false;

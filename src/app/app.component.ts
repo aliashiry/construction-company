@@ -10,7 +10,7 @@ import { ListModeComponent } from "./components/list-mode/list-mode.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, UploadCenterComponent, ListModeComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, UploadCenterComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -79,5 +79,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onFileSelected(file: File) {
     console.log('File selected:', file.name);
+  }
+
+
+  openForm(){
+    this.router.navigate(['/upload-data']);
   }
 }

@@ -13,7 +13,7 @@
     </svg>
   </div>
   <p class="upload-center-drag-text" [style.color]="isDarkTheme ? '#94a3b8' : '#6b7280'">Drag and drop your files here</p>
-  <input #fileInput type="file" accept="image/*,.pdf,.dwg,.dxf" (change)="onFileSelected($event)" hidden />
+  <input #fileInput type="file" accept=".dxf,.dwg" (change)="onFileSelected($event)" hidden />
   <button class="upload-center-button" (click)="triggerFileInput(fileInput)">
     Upload Files
   </button>
@@ -30,3 +30,4 @@
     </div>
   </div>
 </div>
+  

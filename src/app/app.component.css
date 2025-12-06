@@ -155,3 +155,20 @@ nav .backdrop-blur-md { backdrop-filter: blur(6px); }
   /* small spacing for navbar overlap */
   .pt-20 { padding-top: 5rem; }
 }
+
+.Service-section{
+  cursor: pointer;
+}
+.Service-section:hover{
+  opacity: 0.9;
+  transform: translateY(-7px);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+}
+.Feature-future{
+  cursor: not-allowed !important;
+}
+.Feature-future:hover{
+  opacity: 0.6;
+  transform: none !important;
+  box-shadow: none !important;
+}

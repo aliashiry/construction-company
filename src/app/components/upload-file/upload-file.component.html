@@ -1,0 +1,70 @@
+<div class="upload-container">
+  <div class="form-header">
+    <h1>Upload <span class="highlight">Project Files</span></h1>
+    <p>Share your DXF/DWG files with our engineering team</p>
+  </div>
+
+  <div class="form-body">
+    <form id="uploadForm" method="post" enctype="multipart/form-data" (submit)="onSubmit()">
+      <!-- Project Name -->
+      <div class="form-group">
+        <label for="projectName">
+          Project Name
+          <span class="required">*</span>
+        </label>
+        <input type="text" id="projectName" name="projectName" class="form-control"
+          placeholder="Enter your project name" required>
+      </div>
+
+      <!-- File Name -->
+      <div class="form-group">
+        <label for="fileName">File Name (Optional)</label>
+        <input type="text" id="fileName" name="fileName" class="form-control" placeholder="Custom file name">
+      </div>
+
+      <!-- File Upload -->
+      <div class="form-group">
+        <label>
+          Upload File
+          <span class="required">*</span>
+        </label>
+        <div class="file-upload-wrapper" id="fileUploadWrapper">
+          <input type="file" id="fileInput" class="file-upload-input" accept=".dxf,.dwg"
+            (change)="onFileSelected($event)">
+          <div class="file-upload-icon">📁</div>
+          <div class="file-upload-text">
+            <strong>Click to upload</strong> or drag and drop<br>
+            <small>DXF or DWG files only</small>
+          </div>
+        </div>
+
+        <!-- Show current file from service -->
+        <div id="fileInfo" class="file-info" *ngIf="fileStorage.InputFileData">
+          <div class="file-name">
+            <span class="file-icon">📄</span>
+            {{ fileStorage.FileName }}
+          </div>
+          <button type="button" class="btn-remove" (click)="removeFile()">Remove</button>
+        </div>
+
+        <div class="help-text">Maximum file size: 50MB</div>
+      </div>
+
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label for="notes">Notes (Optional)</label>
+        <textarea id="notes" name="notes" class="form-control"
+          placeholder="Add any additional notes or requirements..."></textarea>
+      </div>
+
+      <!-- Alert Messages -->
+      <div id="alertContainer"></div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn-submit" id="submitBtn">
+        Upload Project Files
+      </button>
+    </form>
+  </div>
+</div>
