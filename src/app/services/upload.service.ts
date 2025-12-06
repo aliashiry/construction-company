@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { FileStorage } from '../interfaces/FileStorage';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
   private currentFile: File | null = null;
   private currentData: FileStorage | null = null;
+  private readonly API_BASE_URL = 'http://mepboq.runasp.net/api/history';
 
   constructor(private http: HttpClient) {}
 
@@ -20,18 +21,43 @@ export class UploadService {
     return null;
   }
 
-  getCurrentFile(): File | null {
-    return this.currentFile;
-  }
-
   clearFile() {
     this.currentFile = null;
     if (this.currentData) this.currentData.InputFileData = null;
   }
 
-  uploadFile(file: File): Observable<any> {
+  submitToInput(fileStorage: FileStorage): Observable<any> {
     const formData = new FormData();
-    formData.append('file', file, file.name);
-    return this.http.post('https://hshama7md15.app.n8n.cloud/webhook-test/upload-file-dxf', formData);
+    
+    // إضافة الحقول كما يتوقعها الـ API
+    formData.append('userId', fileStorage.UserID.toString());
+    formData.append('projectName', fileStorage.ProjectName);
+    formData.append('fileName', fileStorage.FileName);
+    formData.append('notes', fileStorage.Notes || '');
+    
+    // إضافة الملف
+    if (fileStorage.InputFileData) {
+      formData.append('inputFile', fileStorage.InputFileData, fileStorage.InputFileData.name);
+    }
+    
+    return this.http.post(`${this.API_BASE_URL}/input`, formData);
+  }
+
+  checkOutput(userId: number, projectName: string, fileName: string): Observable<any> {
+    let params = new HttpParams();
+    params = params.set('userId', userId.toString());
+    params = params.set('projectName', projectName);
+    params = params.set('fileName', fileName);
+    
+    return this.http.get(`${this.API_BASE_URL}/check-ouput`, { params });
+  }
+
+  getOutputFile(userId: number, projectName: string, fileName: string): Observable<any> {
+  let params = new HttpParams();
+    params = params.set('userId', userId.toString());
+    params = params.set('projectName', projectName);
+    params = params.set('fileName', fileName);
+    
+    return this.http.get(`${this.API_BASE_URL}/output/base64`, { params });
   }
 }

@@ -47,7 +47,6 @@ export class UploadCenterComponent {
       });
 
       this.fileSelected.emit(input.files[0]);
-      this.upload();
     }
   }
 
@@ -92,27 +91,9 @@ export class UploadCenterComponent {
       });
 
       this.fileSelected.emit(event.dataTransfer.files[0]);
-      this.upload();
     }
 
   }
-
-  // Upload FIle To service 
-  upload() {
-    // if upload section remove item , remove file form service 
-    if (!this.uploadedFile) {
-      this.uploadService.clearFile();
-      return;
-    }
-
-    this.uploadService.uploadFile(this.uploadedFile).subscribe({
-      next: (res) => console.log('File uploaded successfully', res),
-      error: (err) => console.error('Upload failed', err)
-    });
-  }
-
-
-
 
   closeModal() {
     this.showAuthModal = false;
