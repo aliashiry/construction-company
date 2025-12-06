@@ -9,5 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./loading.component.css']
 })
 export class LoadingComponent {
-  @Input() message: string = 'جاري معالجة البيانات من فضلك انتظر';
+  @Input() message: string = 'Data processing, please wait';
+
 }
