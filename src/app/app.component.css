@@ -218,3 +218,67 @@ nav .backdrop-blur-md { backdrop-filter: blur(6px); }
 section[class*="User Info"] {
   animation: fadeInScale 0.5s ease-out;
 }
+
+.upload-auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(2, 6, 23, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.upload-auth-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(2, 6, 23, 0.08);
+}
+
+.upload-auth-modal-message {
+  color: #0f172a;
+  font-size: 1rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.upload-auth-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.upload-auth-modal-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.upload-auth-modal-btn-login {
+  background: #f97316;
+  color: #fff;
+}
+
+.upload-auth-modal-btn-login:hover {
+  background: #ea580c;
+}
+
+.upload-auth-modal-btn-register {
+  background: #e6eef6;
+  color: #0f172a;
+}
+
+.upload-auth-modal-btn-register:hover {
+  background: #d1e2f1;
+}

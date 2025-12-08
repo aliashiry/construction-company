@@ -133,15 +133,31 @@
             </div>
 
             <!-- Quick Stats -->
+            <!-- Quick Stats -->
             <div class="flex md:flex-col gap-4">
               <div class="text-center p-4 rounded-2xl"
                 [style.background]="isDarkTheme ? 'rgba(249,115,22,0.1)' : 'rgba(249,115,22,0.05)'">
-                <div class="text-3xl font-black text-orange">0</div>
+                <div class="text-3xl font-black text-orange">
+                  <ng-container *ngIf="projectCount$ | async as count; else loading">
+                    {{ count }}
+                  </ng-container>
+                  <ng-template #loading>
+                    <span class="animate-pulse">...</span>
+                  </ng-template>
+                </div>
                 <div class="text-xs font-semibold" [style.color]="isDarkTheme ? '#94a3b8' : '#64748b'">Projects</div>
               </div>
+
               <div class="text-center p-4 rounded-2xl"
                 [style.background]="isDarkTheme ? 'rgba(249,115,22,0.1)' : 'rgba(249,115,22,0.05)'">
-                <div class="text-3xl font-black text-orange">0</div>
+                <div class="text-3xl font-black text-orange">
+                  <ng-container *ngIf="totalFilesCount$ | async as count; else loading">
+                    {{ count }}
+                  </ng-container>
+                  <ng-template #loading>
+                    <span class="animate-pulse">...</span>
+                  </ng-template>
+                </div>
                 <div class="text-xs font-semibold" [style.color]="isDarkTheme ? '#94a3b8' : '#64748b'">Uploads</div>
               </div>
             </div>
@@ -384,4 +400,19 @@
 
   <router-outlet></router-outlet>
 
+</div>
+
+
+
+
+
+<!-- Auth Modal -->
+<div class="upload-auth-modal-overlay" *ngIf="showAuthModal" (click)="closeModal()">
+  <div class="upload-auth-modal" (click)="$event.stopPropagation()">
+    <p class="upload-auth-modal-message">You must log in first to upload files.</p>
+    <div class="upload-auth-modal-buttons">
+      <button class="upload-auth-modal-btn upload-auth-modal-btn-login" (click)="goToLogin()">Login</button>
+      <button class="upload-auth-modal-btn upload-auth-modal-btn-register" (click)="goToRegister()">Register</button>
+    </div>
+  </div>
 </div>

@@ -19,7 +19,10 @@ export class FileResultComponent implements OnInit, OnDestroy {
   errorMessage: string = '';
   csvData: any[] = [];
   csvHeaders: string[] = [];
-  done : boolean = false;
+  projectName: string = '';
+  fileName: string = '';
+
+  done: boolean = false;
 
   private pollingSubscription?: Subscription;
   private maxPollingTime = 600000; // 10 دقايق (600000 مللي ثانية)
@@ -62,6 +65,8 @@ export class FileResultComponent implements OnInit, OnDestroy {
     }
 
     const { userId, projectName, fileName } = savedData;
+    this.projectName = projectName;
+    this.fileName = fileName;
 
     // ✅ التحقق من وجود ProjectName
     if (!projectName || projectName.trim() === '') {
@@ -88,10 +93,10 @@ export class FileResultComponent implements OnInit, OnDestroy {
             this.isLoading = false;      // ✅ وقف الـ spinner فوراً
             this.pollingSubscription?.unsubscribe(); // وقف الـ polling
             this.fetchOutputFile(userId, projectName, fileName);
-          } 
+          }
           else if (response.status === 'Processing') {
             this.message = 'File is still processing, please wait...';
-          } 
+          }
           else if (response.status === 'NotFound') {
             this.pollingSubscription?.unsubscribe();
             this.errorMessage = 'File record not found.';
@@ -115,46 +120,65 @@ export class FileResultComponent implements OnInit, OnDestroy {
   }
 
   fetchOutputFile(userId: number, projectName: string, fileName: string) {
+    this.isLoading = true;
     this.message = 'Loading file data...';
+    this.errorMessage = '';
 
-    this.uploadService.getOutputFile(userId, projectName, fileName)
+    this.uploadService.getOutputFileBase64(userId, projectName, fileName)
       .subscribe({
-        next: (res) => {
-          if (res.FileBase64) {
-            this.processBase64ToCsv(res.FileBase64);
+        next: (res: any) => {
+          console.log("BASE64 RESPONSE:", res);
+
+          if (res?.fileBase64 || res?.FileBase64) {
+            const base64 = res.fileBase64 ?? res.FileBase64;
+
+            this.processBase64ToCsv(base64);
             this.message = 'File loaded successfully!';
+            this.done = true;
           } else {
-            this.errorMessage = 'No file data in response';
+            this.errorMessage = 'No file data found in server response.';
           }
+
           this.isLoading = false;
         },
+
         error: (err) => {
           console.error('Error fetching file:', err);
-          this.errorMessage = 'Error fetching file from server';
+          this.errorMessage = 'Error fetching file from server.';
           this.isLoading = false;
         }
       });
   }
 
+
+
   private processBase64ToCsv(base64String: string) {
-    const binaryString = atob(base64String);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
+    try {
+      const decoded = atob(base64String);
+      const bytes = new Uint8Array(decoded.length);
 
-    const decoder = new TextDecoder('utf-8');
-    const csvText = decoder.decode(bytes);
+      for (let i = 0; i < decoded.length; i++) {
+        bytes[i] = decoded.charCodeAt(i);
+      }
 
-    const lines = csvText.trim().split('\n');
-    if (lines.length > 0) {
+      const csvText = new TextDecoder("utf-8").decode(bytes);
+
+      const lines = csvText.trim().split('\n');
+
       this.csvHeaders = lines[0].split(',').map(h => h.trim());
+
       this.csvData = lines.slice(1).map(line => {
         const values = line.split(',').map(v => v.trim());
         const row: any = {};
-        this.csvHeaders.forEach((header, index) => row[header] = values[index] || '');
+        this.csvHeaders.forEach((header, i) => {
+          row[header] = values[i] ?? '';
+        });
         return row;
       });
+
+    } catch (e) {
+      console.error("CSV decode error:", e);
+      this.errorMessage = "Error decoding CSV file.";
     }
   }
 
@@ -167,9 +191,51 @@ export class FileResultComponent implements OnInit, OnDestroy {
   }
 
   getStatus(): 'loading' | 'done' | 'error' {
-  if (this.errorMessage) return 'error';
-  if (!this.done) return 'loading';
-  return 'done';
-}
+    if (this.errorMessage) return 'error';
+    if (!this.done) return 'loading';
+    return 'done';
+  }
+
+
+  downloadOutputFile() {
+    const savedDataStr = localStorage.getItem('lastFileOutput');
+    if (!savedDataStr) return;
+
+    const savedData = JSON.parse(savedDataStr);
+    this.uploadService.downloadOutputFile(savedData.userId, savedData.projectName, savedData.fileName)
+      .subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${savedData.fileName}_output.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+
+  downloadAllFiles() {
+    const savedDataStr = localStorage.getItem('lastFileOutput');
+    if (!savedDataStr) return;
+
+    const savedData = JSON.parse(savedDataStr);
+
+    this.uploadService.downloadAllFiles(savedData.userId, savedData.projectName, savedData.fileName)
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${savedData.fileName}_all_files.zip`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error('Download all files error:', err);
+          alert('Failed to download Input & Output files.');
+        }
+      });
+  }
+
+
 
 }

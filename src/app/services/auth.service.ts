@@ -19,7 +19,7 @@ export class AuthService {
   }
 
   private getStoredUser(): User | null {
-    const stored = localStorage.getItem(LOCAL_STORAGE_KEYS.CURRENT_USER);
+    const stored = localStorage.getItem(`CURRENT_USER`);
     return stored ? JSON.parse(stored) : null;
   }
 
@@ -28,7 +28,7 @@ export class AuthService {
     return this.http.post<any>(url, { Email, Password }).pipe(
       map(res => this.normalizeUser(res)),
       tap(user => {
-        localStorage.setItem(LOCAL_STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+        localStorage.setItem('CURRENT_USER', JSON.stringify(user));
         this.currentUserSubject.next(user);
       }),
       catchError(err => throwError(() => err))
@@ -41,7 +41,7 @@ export class AuthService {
     return this.http.post<User>(url, { fullName, email, password }).pipe(
       map(res => this.normalizeUser(res)),
       tap(user => {
-        localStorage.setItem(LOCAL_STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+        localStorage.setItem(`CURRENT_USER`, JSON.stringify(user));
         this.currentUserSubject.next(user);
       }),
       catchError(err => {
@@ -51,24 +51,13 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.CURRENT_USER);
+    localStorage.removeItem('CURRENT_USER');
     this.currentUserSubject.next(null);
   }
 
   isLoggedIn(): boolean {
     return !!this.currentUserSubject.value;
   }
-
-  // private normalizeUser(userLike: any): User {
-  //   const u = userLike.user ?? userLike;
-
-  //   return {
-  //     id: u.userID || u.id || "",
-  //     name: u.fullName || u.name || "",
-  //     email: u.email || "",
-  //     token: userLike.token || u.token || ""
-  //   };
-  // }
 
   private normalizeUser(res: any): User {
     return {

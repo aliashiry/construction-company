@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FileStorage } from '../interfaces/FileStorage';
 
@@ -9,7 +9,7 @@ export class UploadService {
   private currentData: FileStorage | null = null;
   private readonly API_BASE_URL = 'http://mepboq.runasp.net/api/history';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   setFileStorage(data: FileStorage) {
     this.currentData = data;
@@ -28,25 +28,25 @@ export class UploadService {
   // -------------------------------------
   // ✅ 1) إرسال ملف الإدخال إلى API (/input)
   // -------------------------------------
- submitToInput(fileStorage: FileStorage, forwardUrl?: string): Observable<any> {
-  const formData = new FormData();
+  submitToInput(fileStorage: FileStorage, forwardUrl?: string): Observable<any> {
+    const formData = new FormData();
 
-  // Add file only to FormData
-  if (fileStorage.InputFileData) {
-    formData.append('inputFile', fileStorage.InputFileData, fileStorage.InputFileData.name);
+    // Add file only to FormData
+    if (fileStorage.InputFileData) {
+      formData.append('inputFile', fileStorage.InputFileData, fileStorage.InputFileData.name);
+    }
+
+    // Build query parameters
+    const params = new URLSearchParams({
+      userId: fileStorage.UserID.toString(),
+      projectName: fileStorage.ProjectName,
+      fileName: fileStorage.FileName,
+      notes: fileStorage.Notes || '',
+      forwardUrl: forwardUrl || 'https://hshama7md15.app.n8n.cloud/webhook/upload-file-dxf'
+    });
+
+    return this.http.post(`${this.API_BASE_URL}/input?${params.toString()}`, formData);
   }
-
-  // Build query parameters
-  const params = new URLSearchParams({
-    userId: fileStorage.UserID.toString(),
-    projectName: fileStorage.ProjectName,
-    fileName: fileStorage.FileName,
-    notes: fileStorage.Notes || '',
-    forwardUrl: forwardUrl || 'https://hshama7md15.app.n8n.cloud/webhook/upload-file-dxf'
-  });
-
-  return this.http.post(`${this.API_BASE_URL}/input?${params.toString()}`, formData);
-}
 
   // -------------------------------------
   // ✅ 2) التحقق من وجود ملف الإخراج
@@ -74,7 +74,7 @@ export class UploadService {
   }
 
 
-   // -------------------------------------
+  // -------------------------------------
   // ✅ NEW: التحقق من حالة ملف الإخراج
   // -------------------------------------
   checkOutputStatus(userId: number, projectName: string, fileName: string): Observable<any> {
@@ -85,4 +85,72 @@ export class UploadService {
 
     return this.http.get(`${this.API_BASE_URL}/output/status`, { params });
   }
+
+  getOutputFileBase64(userId: number, projectName: string, fileName: string) {
+    return this.http.get(
+      `${this.API_BASE_URL}/output/base64`,
+      { params: { userId, projectName, fileName } }
+    );
+  }
+
+  downloadOutputFile(userId: number, projectName: string, fileName: string): Observable<Blob> {
+    return this.http.get(`${this.API_BASE_URL}/output/download`, {
+      params: { userId, projectName, fileName },
+      responseType: 'blob'
+    });
+  }
+
+  downloadAllFiles(userId: number, projectName: string, fileName: string): Observable<Blob> {
+    return this.http.get(`${this.API_BASE_URL}/download/all`, {
+      params: {
+        userId: userId.toString(),
+        projectName: projectName,
+        fileName: fileName
+      },
+      responseType: 'blob'
+    });
+  }
+
+
+
+  // -----------------------------
+  // Get all projects for a user
+  // -----------------------------
+  getAllProjects(userId: number): Observable<string[]> {
+    const params = new HttpParams().set('userId', userId.toString());
+    return this.http.get<string[]>(`${this.API_BASE_URL}/projects`, { params });
+  }
+
+  // -----------------------------
+  // Get number of projects for a user
+  // -----------------------------
+  getProjectsCount(userId: number): Observable<{ ProjectCount: number }> {
+    const params = new HttpParams().set('userId', userId.toString());
+    return this.http.get<{ ProjectCount: number }>(`${this.API_BASE_URL}/projects/count`, { params });
+  }
+
+  // -----------------------------
+  // Get number of files for a user's project
+  // -----------------------------
+  getFilesCountByProject(userId: number, projectName: string): Observable<number> {
+    const params = new HttpParams()
+      .set('userId', userId.toString());
+    return this.http.get<{ projectCount: number }>(`${this.API_BASE_URL}/projects/count`, { params })
+      .pipe(
+        map(res => res.projectCount)   
+      );
+  }
+
+  // -----------------------------
+  // Get total number of files for a user
+  // -----------------------------
+  getFilesCount(userId: number): Observable<number> {
+    const params = new HttpParams().set('userId', userId.toString());
+
+    return this.http.get<{ fileCount: number }>(`${this.API_BASE_URL}/files/totalcount`, { params })
+      .pipe(
+        map(response => response.fileCount)   
+      );
+  }
+
 }

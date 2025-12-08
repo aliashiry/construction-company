@@ -1,5 +1,5 @@
 <div class="container" [ngSwitch]="getStatus()">
-  
+
   <!-- Loading State -->
   <div *ngSwitchCase="'loading'" class="loading">
     <div class="spinner"></div>
@@ -16,9 +16,23 @@
 
   <!-- Success State -->
   <div *ngSwitchCase="'done'" class="results">
-    <h2>Output Results</h2>
-    <p class="success-message">{{ message }}</p>
-    
+    <!-- Header Row with Info and Buttons -->
+    <div class="results-header">
+      <div class="file-info">
+        <span class="info-item"><strong>Project:</strong> {{ projectName }}</span>
+        <span class="info-item"><strong>File:</strong> {{ fileName }}</span>
+      </div>
+      <div class="file-actions">
+        <button (click)="downloadOutputFile()" class="btn btn-primary">
+          <span class="btn-icon">📥</span> Download Output
+        </button>
+        <button (click)="downloadAllFiles()" class="btn btn-secondary">
+          <span class="btn-icon">📦</span> Download All
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
     <div class="table-container">
       <table>
         <thead>
@@ -33,10 +47,10 @@
         </tbody>
       </table>
     </div>
-    
+
     <div class="actions">
-      <button (click)="goBack()">Upload New File</button>
-      <button (click)="goHome()">Go Home</button>
+      <button (click)="goBack()" class="btn-action">Upload New File</button>
+      <button (click)="goHome()" class="btn-action">Go Home</button>
     </div>
   </div>
 

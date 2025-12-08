@@ -14,10 +14,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
   },
   {
-    path: 'register',
-    loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent)
-  },
-  {
     path: 'profile',
     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
   },
@@ -26,10 +22,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/services/services.component').then(m => m.ServicesComponent)
   },
   {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent)
+  },
+  {
     path: 'upload-data',
     loadComponent: () => import('./components/upload-file/upload-file.component').then(m => m.UploadFileComponent)
-  },{
+  },
+  {
     path: 'file-result',
-    loadComponent: () => import('./components/file-result/file-result.component').then(m => m.FileResultComponent)}
+    loadComponent: () => import('./components/file-result/file-result.component').then(m => m.FileResultComponent)
+  }
 ];
 
