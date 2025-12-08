@@ -32,6 +32,10 @@ export const routes: Routes = [
   {
     path: 'file-result',
     loadComponent: () => import('./components/file-result/file-result.component').then(m => m.FileResultComponent)
+  },
+  {
+    path: 'history',
+    loadComponent: () => import('./components/history/history.component').then(m => m.HistoryComponent)
   }
 ];
 

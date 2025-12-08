@@ -4,4 +4,5 @@ export interface FileStorage {
   FileName: string;
   InputFileData: File | null;
   Notes: string;
+  dateCreate?: Date;
 }

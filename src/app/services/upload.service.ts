@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FileStorage } from '../interfaces/FileStorage';
+export interface FullFileDataResponse {
+  fullFileData: FileStorage[];
+}
 
 @Injectable({ providedIn: 'root' })
+
 export class UploadService {
   private currentFile: File | null = null;
   private currentData: FileStorage | null = null;
@@ -113,6 +117,13 @@ export class UploadService {
 
 
 
+  // Get full file data history for user
+
+  getFullFileData(userId: number): Observable<FullFileDataResponse> {
+    const params = new HttpParams().set('userId', userId.toString());
+    return this.http.get<FullFileDataResponse>(`${this.API_BASE_URL}/files/full-data`, { params });
+  }
+
   // -----------------------------
   // Get all projects for a user
   // -----------------------------
@@ -137,7 +148,7 @@ export class UploadService {
       .set('userId', userId.toString());
     return this.http.get<{ projectCount: number }>(`${this.API_BASE_URL}/projects/count`, { params })
       .pipe(
-        map(res => res.projectCount)   
+        map(res => res.projectCount)
       );
   }
 
@@ -149,7 +160,7 @@ export class UploadService {
 
     return this.http.get<{ fileCount: number }>(`${this.API_BASE_URL}/files/totalcount`, { params })
       .pipe(
-        map(response => response.fileCount)   
+        map(response => response.fileCount)
       );
   }
 

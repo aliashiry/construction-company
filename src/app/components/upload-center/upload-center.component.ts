@@ -44,6 +44,7 @@ export class UploadCenterComponent {
         FileName: input.files[0].name,
         InputFileData: input.files[0],
         Notes: ''
+        // dateCreate?: new Date()
       });
 
       this.fileSelected.emit(input.files[0]);
