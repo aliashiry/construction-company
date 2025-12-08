@@ -1,39 +1,5 @@
 <div class="upload-page-wrapper">
-  <!-- Loading Component -->
-  <app-loading *ngIf="isLoading" message="جاري معالجة البيانات من فضلك انتظر"></app-loading>
-
-  <!-- Results Section -->
-  <div *ngIf="showResults && csvData.length > 0" class="results-full-page">
-    <div class="results-container">
-      <div class="results-header">
-        <h1>نتائج المعالجة</h1>
-        <p *ngIf="successMessage" class="success-alert">{{ successMessage }}</p>
-      </div>
-
-      <div class="table-wrapper">
-      <table class="results-table">
-          <thead>
-        <tr>
-      <th *ngFor="let header of csvHeaders">{{ header }}</th>
-   </tr>
-          </thead>
-          <tbody>
-    <tr *ngFor="let row of csvData">
-              <td *ngFor="let header of csvHeaders">{{ row[header] }}</td>
-       </tr>
-   </tbody>
-        </table>
-      </div>
-
-      <div class="results-actions">
-        <button class="btn-restart" (click)="resetForm()">معالجة ملف جديد</button>
-        <button class="btn-home" (click)="goHome()">العودة للصفحة الرئيسية</button>
-      </div>
-</div>
-  </div>
-
-<!-- Form Section -->
-  <div *ngIf="!showResults" class="upload-form-full-page">
+  <div class="upload-form-full-page">
     <div class="form-container">
       <div class="form-header">
         <h1>Upload <span class="highlight">Project Files</span></h1>
@@ -41,115 +7,123 @@
       </div>
 
       <div class="form-body">
+        <!-- Loading Message -->
+        <div *ngIf="isLoading" class="alert alert-info">
+          <div class="loading-inline">
+            <div class="spinner-small"></div>
+            <span>{{ successMessage || 'Uploading file, please wait...' }}</span>
+          </div>
+        </div>
+
         <!-- Error Messages -->
-        <div *ngIf="errorMessage" class="alert alert-error">
-{{ errorMessage }}
+        <div *ngIf="errorMessage && !isLoading" class="alert alert-error">
+          {{ errorMessage }}
         </div>
 
         <!-- Success Messages -->
-   <div *ngIf="successMessage" class="alert alert-success">
+        <div *ngIf="successMessage && !isLoading" class="alert alert-success">
           {{ successMessage }}
         </div>
 
         <form id="uploadForm" (submit)="onSubmit($event)">
-      <!-- Project Name -->
+          <!-- Project Name -->
           <div class="form-group">
-     <label for="projectName">
-     Project Name
-    <span class="required">*</span>
+            <label for="projectName">
+              Project Name
+              <span class="required">*</span>
             </label>
             <input 
               type="text" 
-         id="projectName" 
-          name="projectName" 
-     class="form-control"
-   [(ngModel)]="fileStorage.ProjectName" 
-  placeholder="Enter your project name" 
-    required
-   [disabled]="isLoading"
+              id="projectName" 
+              name="projectName" 
+              class="form-control"
+              [(ngModel)]="fileStorage.ProjectName" 
+              placeholder="Enter your project name" 
+              required
+              [disabled]="isLoading"
             >
-    </div>
+          </div>
 
-    <!-- File Name -->
- <div class="form-group">
-        <label for="fileName">
-File Name
-       <span class="required">*</span>
-    </label>
-    <input 
+          <!-- File Name -->
+          <div class="form-group">
+            <label for="fileName">
+              File Name
+              <span class="required">*</span>
+            </label>
+            <input 
               type="text" 
-     id="fileName" 
-  name="fileName" 
+              id="fileName" 
+              name="fileName" 
               class="form-control" 
-    [(ngModel)]="selectedFileName" 
-   placeholder="Enter file name or it will be auto-filled"
-     [disabled]="isLoading"
-          >
-       <small class="help-text">يمكنك تعديل اسم الملف قبل الإرسال</small>
-       </div>
+              [(ngModel)]="selectedFileName" 
+              placeholder="Enter file name or it will be auto-filled"
+              [disabled]="isLoading"
+            >
+            <small class="help-text">You can edit the file name before sending</small>
+          </div>
 
           <!-- File Upload -->
           <div class="form-group">
-         <label>
+            <label>
               Upload File
-       <span class="required">*</span>
-       </label>
-            <div class="file-upload-wrapper" [class.has-file]="fileStorage.InputFileData">
-         <input 
-     type="file" 
-  id="fileInput" 
- class="file-upload-input" 
+              <span class="required">*</span>
+            </label>
+            <div class="file-upload-wrapper" [class.has-file]="fileStorage.InputFileData" [class.disabled]="isLoading">
+              <input 
+                type="file" 
+                id="fileInput" 
+                class="file-upload-input" 
                 accept=".dxf,.dwg"
- (change)="onFileSelected($event)"
-    [disabled]="isLoading"
-  >
+                (change)="onFileSelected($event)"
+                [disabled]="isLoading"
+              >
               <div class="file-upload-icon">📁</div>
               <div class="file-upload-text">
-<strong>Click to upload</strong> or drag and drop<br>
-     <small>DXF or DWG files only</small>
-   </div>
+                <strong>Click to upload</strong> or drag and drop<br>
+                <small>DXF or DWG files only</small>
+              </div>
             </div>
 
-            <!-- Show current file from service -->
-         <div *ngIf="fileStorage.InputFileData" class="file-info">
-     <div class="file-name">
-       <span class="file-icon">📄</span>
-             {{ fileStorage.FileName }}
+            <!-- Show current file -->
+            <div *ngIf="fileStorage.InputFileData" class="file-info">
+              <div class="file-name">
+                <span class="file-icon">📄</span>
+                {{ fileStorage.FileName }}
               </div>
-  <button 
- type="button" 
-   class="btn-remove" 
-    (click)="removeFile()"
-         [disabled]="isLoading"
-       >
-      Remove
- </button>
+              <button 
+                type="button" 
+                class="btn-remove" 
+                (click)="removeFile()"
+                [disabled]="isLoading"
+              >
+                Remove
+              </button>
             </div>
 
             <div class="help-text">Maximum file size: 50MB</div>
-</div>
+          </div>
 
-  <!-- Notes -->
-    <div class="form-group">
-       <label for="notes">Notes (Optional)</label>
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="notes">Notes (Optional)</label>
             <textarea 
-          id="notes" 
-           name="notes" 
-           class="form-control"
-            [(ngModel)]="fileStorage.Notes" 
-         placeholder="Add any additional notes or requirements..."
-      [disabled]="isLoading"
+              id="notes" 
+              name="notes" 
+              class="form-control"
+              [(ngModel)]="fileStorage.Notes" 
+              placeholder="Add any additional notes or requirements..."
+              [disabled]="isLoading"
             ></textarea>
           </div>
 
-        <!-- Submit Button -->
-   <button 
+          <!-- Submit Button -->
+          <button 
             type="submit" 
             class="btn-submit" 
- id="submitBtn" 
-      [disabled]="isUploading || isLoading"
+            id="submitBtn" 
+            [disabled]="isUploading || isLoading"
           >
-  {{ isLoading ? 'جاري المعالجة...' : 'Upload Project Files' }}
+            {{ isLoading ? 'Uploading...' : 'Upload Project Files' }}
           </button>
         </form>
       </div>

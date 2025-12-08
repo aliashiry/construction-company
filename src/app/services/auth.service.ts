@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private currentUserSubject = new BehaviorSubject<User | null>(this.getStoredUser());
   currentUser$ = this.currentUserSubject.asObservable();
@@ -23,18 +23,17 @@ export class AuthService {
     return stored ? JSON.parse(stored) : null;
   }
 
-  login(email: string, password: string): Observable<User> {
+  login(Email: string, Password: string): Observable<User> {
     const url = `${API.BASE_URL}/Auth/login`;
-    return this.http.post<User>(url, { email, password }).pipe(
+    return this.http.post<any>(url, { Email, Password }).pipe(
       map(res => this.normalizeUser(res)),
       tap(user => {
         localStorage.setItem(LOCAL_STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
         this.currentUserSubject.next(user);
       }),
-      catchError(err => {
-        return throwError(() => err);
-      })
+      catchError(err => throwError(() => err))
     );
+
   }
 
   register(fullName: string, email: string, password: string): Observable<User> {
@@ -60,14 +59,25 @@ export class AuthService {
     return !!this.currentUserSubject.value;
   }
 
-  private normalizeUser(userLike: any): User {
-    // Ensure the user object fits our User interface.
+  // private normalizeUser(userLike: any): User {
+  //   const u = userLike.user ?? userLike;
+
+  //   return {
+  //     id: u.userID || u.id || "",
+  //     name: u.fullName || u.name || "",
+  //     email: u.email || "",
+  //     token: userLike.token || u.token || ""
+  //   };
+  // }
+
+  private normalizeUser(res: any): User {
     return {
-      id: userLike.id || userLike.userId || userLike._id || 'user-' + Math.random().toString(36).substr(2, 9),
-      name: userLike.name || userLike.fullName || userLike.username || userLike.email?.split('@')[0],
-      email: userLike.email || '',
-      token: userLike.token || userLike.accessToken || ''
+      id: res.user.userID,
+      name: res.user.fullName,
+      email: res.user.email,
+      token: res.token
     };
   }
+
 }
 

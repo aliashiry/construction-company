@@ -1,0 +1,43 @@
+<div class="container" [ngSwitch]="getStatus()">
+  
+  <!-- Loading State -->
+  <div *ngSwitchCase="'loading'" class="loading">
+    <div class="spinner"></div>
+    <p>{{ message }}</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngSwitchCase="'error'" class="error">
+    <h2>Error</h2>
+    <p>{{ errorMessage }}</p>
+    <button (click)="goHome()">Go Home</button>
+    <button (click)="goBack()">Try Again</button>
+  </div>
+
+  <!-- Success State -->
+  <div *ngSwitchCase="'done'" class="results">
+    <h2>Output Results</h2>
+    <p class="success-message">{{ message }}</p>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th *ngFor="let header of csvHeaders">{{ header }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of csvData">
+            <td *ngFor="let header of csvHeaders">{{ row[header] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="actions">
+      <button (click)="goBack()">Upload New File</button>
+      <button (click)="goHome()">Go Home</button>
+    </div>
+  </div>
+
+</div>

@@ -28,6 +28,8 @@ export const routes: Routes = [
   {
     path: 'upload-data',
     loadComponent: () => import('./components/upload-file/upload-file.component').then(m => m.UploadFileComponent)
-  }
+  },{
+    path: 'file-result',
+    loadComponent: () => import('./components/file-result/file-result.component').then(m => m.FileResultComponent)}
 ];
 

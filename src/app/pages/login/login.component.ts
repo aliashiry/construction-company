@@ -17,7 +17,7 @@ export class LoginComponent {
   loading = false;
   error = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   onSubmit() {
     if (!this.email || !this.password) {
@@ -27,8 +27,9 @@ export class LoginComponent {
     this.loading = true;
     this.error = '';
     this.authService.login(this.email, this.password).subscribe({
-      next: () => {
+      next: (user) => {   
         this.loading = false;
+        console.log(user);
         this.router.navigate(['/']);
       },
       error: () => {
@@ -36,6 +37,7 @@ export class LoginComponent {
         this.error = 'Login failed';
       }
     });
+
   }
 }
 

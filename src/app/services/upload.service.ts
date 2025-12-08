@@ -28,20 +28,25 @@ export class UploadService {
   // -------------------------------------
   // ✅ 1) إرسال ملف الإدخال إلى API (/input)
   // -------------------------------------
-  submitToInput(fileStorage: FileStorage): Observable<any> {
-    const formData = new FormData();
+ submitToInput(fileStorage: FileStorage, forwardUrl?: string): Observable<any> {
+  const formData = new FormData();
 
-    formData.append('userId', fileStorage.UserID.toString());
-    formData.append('projectName', fileStorage.ProjectName);
-    formData.append('fileName', fileStorage.FileName);
-    formData.append('notes', fileStorage.Notes || '');
-
-    if (fileStorage.InputFileData) {
-      formData.append('inputFile', fileStorage.InputFileData, fileStorage.InputFileData.name);
-    }
-
-    return this.http.post(`${this.API_BASE_URL}/input`, formData);
+  // Add file only to FormData
+  if (fileStorage.InputFileData) {
+    formData.append('inputFile', fileStorage.InputFileData, fileStorage.InputFileData.name);
   }
+
+  // Build query parameters
+  const params = new URLSearchParams({
+    userId: fileStorage.UserID.toString(),
+    projectName: fileStorage.ProjectName,
+    fileName: fileStorage.FileName,
+    notes: fileStorage.Notes || '',
+    forwardUrl: forwardUrl || 'https://hshama7md15.app.n8n.cloud/webhook/upload-file-dxf'
+  });
+
+  return this.http.post(`${this.API_BASE_URL}/input?${params.toString()}`, formData);
+}
 
   // -------------------------------------
   // ✅ 2) التحقق من وجود ملف الإخراج
@@ -66,5 +71,18 @@ export class UploadService {
       .set('fileName', fileName);
 
     return this.http.get(`${this.API_BASE_URL}/output/base64`, { params });
+  }
+
+
+   // -------------------------------------
+  // ✅ NEW: التحقق من حالة ملف الإخراج
+  // -------------------------------------
+  checkOutputStatus(userId: number, projectName: string, fileName: string): Observable<any> {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('projectName', projectName)
+      .set('fileName', fileName);
+
+    return this.http.get(`${this.API_BASE_URL}/output/status`, { params });
   }
 }
