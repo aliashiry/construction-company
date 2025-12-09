@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { FileStorage } from '../interfaces/FileStorage';
-export interface FullFileDataResponse {
-  fullFileData: FileStorage[];
-}
+import { FileStorage, FileDataFromAPI, FullFileDataResponse } from '../interfaces/FileStorage';
+import { API } from '../constants/app.constants';
 
 @Injectable({ providedIn: 'root' })
-
 export class UploadService {
   private currentFile: File | null = null;
   private currentData: FileStorage | null = null;
-  private readonly API_BASE_URL = 'http://mepboq.runasp.net/api/history';
+  private readonly API_BASE_URL = `${API.BASE_URL}/history`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   setFileStorage(data: FileStorage) {
     this.currentData = data;
@@ -35,12 +32,10 @@ export class UploadService {
   submitToInput(fileStorage: FileStorage, forwardUrl?: string): Observable<any> {
     const formData = new FormData();
 
-    // Add file only to FormData
     if (fileStorage.InputFileData) {
       formData.append('inputFile', fileStorage.InputFileData, fileStorage.InputFileData.name);
     }
 
-    // Build query parameters
     const params = new URLSearchParams({
       userId: fileStorage.UserID.toString(),
       projectName: fileStorage.ProjectName,
@@ -61,7 +56,6 @@ export class UploadService {
       .set('projectName', projectName)
       .set('fileName', fileName);
 
-    // تعديل المسار الصحيح: (check-output) بدل (check-ouput)
     return this.http.get(`${this.API_BASE_URL}/output/base64`, { params });
   }
 
@@ -76,7 +70,6 @@ export class UploadService {
 
     return this.http.get(`${this.API_BASE_URL}/output/base64`, { params });
   }
-
 
   // -------------------------------------
   // ✅ NEW: التحقق من حالة ملف الإخراج
@@ -104,6 +97,8 @@ export class UploadService {
     });
   }
 
+  
+
   downloadAllFiles(userId: number, projectName: string, fileName: string): Observable<Blob> {
     return this.http.get(`${this.API_BASE_URL}/download/all`, {
       params: {
@@ -115,10 +110,9 @@ export class UploadService {
     });
   }
 
-
-
-  // Get full file data history for user
-
+  // -------------------------------------
+  // ✅ Get full file data history for user
+  // -------------------------------------
   getFullFileData(userId: number): Observable<FullFileDataResponse> {
     const params = new HttpParams().set('userId', userId.toString());
     return this.http.get<FullFileDataResponse>(`${this.API_BASE_URL}/files/full-data`, { params });
@@ -163,5 +157,4 @@ export class UploadService {
         map(response => response.fileCount)
       );
   }
-
 }

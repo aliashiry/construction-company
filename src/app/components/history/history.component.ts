@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UploadService } from '../../services/upload.service';
-import { FileStorage } from '../../interfaces/FileStorage'; 
+import { FileDataFromAPI } from '../../interfaces/FileStorage';
 
 @Component({
   selector: 'app-history',
@@ -11,12 +11,12 @@ import { FileStorage } from '../../interfaces/FileStorage';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  fileHistory: FileStorage[] = []; 
+  fileHistory: FileDataFromAPI[] = [];  // ✅ استخدم FileDataFromAPI
   isLoading: boolean = true;
   errorMessage: string = '';
   userId: number = 0;
 
-  constructor(private uploadService: UploadService) {}
+  constructor(private uploadService: UploadService) { }
 
   ngOnInit(): void {
     this.loadUserHistory();
@@ -47,22 +47,23 @@ export class HistoryComponent implements OnInit {
     });
   }
 
-  downloadInputFile(projectName: string, fileName: string): void {
-    this.uploadService.downloadAllFiles(this.userId, projectName, fileName).subscribe({
-      next: (blob) => {
-        this.saveFile(blob, fileName);
-      },
-      error: (error) => {
-        console.error('❌ Error downloading input file:', error);
-        alert('Failed to download input file');
-      }
-    });
-  }
-
+ downloadAllFiles(projectName: string, fileName: string): void {
+  this.uploadService.downloadAllFiles(this.userId, projectName, fileName).subscribe({
+    next: (blob) => {
+      const fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+      this.saveFile(blob, `Project-${projectName}_${fileNameWithoutExt}.zip`);
+    },
+    error: (error) => {
+      console.error('Error downloading input file:', error);
+      alert('Failed to download input file');
+    }
+  });
+}
   downloadOutputFile(projectName: string, fileName: string): void {
     this.uploadService.downloadOutputFile(this.userId, projectName, fileName).subscribe({
       next: (blob) => {
-        this.saveFile(blob, `output_${fileName}`);
+        const fileNameWithoutExt = fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
+        this.saveFile(blob, `${fileNameWithoutExt}_output.csv`);
       },
       error: (error) => {
         console.error('❌ Error downloading output file:', error);
@@ -82,7 +83,7 @@ export class HistoryComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  formatDate(date: Date | string): string {
+  formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return dateObj.toLocaleDateString('en-US', {

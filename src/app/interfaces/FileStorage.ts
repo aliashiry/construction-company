@@ -4,5 +4,15 @@ export interface FileStorage {
   FileName: string;
   InputFileData: File | null;
   Notes: string;
-  dateCreate?: Date;
+  dateCreate?: string;
+}
+export interface FileDataFromAPI {
+  projectName: string;
+  fileName: string;
+  notes: string;
+  dateCreate?: string;
+}
+
+export interface FullFileDataResponse {
+  fullFileData: FileDataFromAPI[];
 }
