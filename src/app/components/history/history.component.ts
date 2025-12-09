@@ -11,7 +11,7 @@ import { FileDataFromAPI } from '../../interfaces/FileStorage';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  fileHistory: FileDataFromAPI[] = [];  // ✅ استخدم FileDataFromAPI
+  fileHistory: FileDataFromAPI[] = [];  
   isLoading: boolean = true;
   errorMessage: string = '';
   userId: number = 0;

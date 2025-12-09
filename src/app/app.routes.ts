@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // {
+  //   path: '',
+  //   loadComponent: () => import('./app.component').then(m => m.AppComponent)
+  //   },
   {
     path: 'list',
     loadComponent: () => import('./pages/list/list.component').then(m => m.ListPageComponent)
-  },
-  {
-    path: 'upload',
-    loadComponent: () => import('./pages/upload/upload.component').then(m => m.UploadPageComponent)
   },
   {
     path: 'login',
@@ -26,7 +26,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent)
   },
   {
-    path: 'upload-data',
+    path: 'upload',
     loadComponent: () => import('./components/upload-file/upload-file.component').then(m => m.UploadFileComponent)
   },
   {
@@ -36,6 +36,15 @@ export const routes: Routes = [
   {
     path: 'history',
     loadComponent: () => import('./components/history/history.component').then(m => m.HistoryComponent)
-  }
+  },
+  {
+    path: 'error',
+    loadComponent: () => import('./pages/notfound/notfound.component').then(m => m.NotfoundComponent)
+  },
+  // {
+  //   path: '**',
+  //   redirectTo: 'error',
+  //   pathMatch: 'full'
+  // }
 ];
 

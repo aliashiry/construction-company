@@ -1,0 +1,39 @@
+<div class="body">
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Oops! Page Not Found</h1>
+        <p class="error-message">
+            The page you're looking for seems to have wandered off into the construction zone.
+            <br>Let's get you back on track!
+        </p>
+
+        <div class="button-group">
+            <!-- <a href="/" class="btn btn-primary">Go Home</a> -->
+            <button class="btn btn-primary" (click)="goToHome()"> Go Home</button>
+            <button class="btn btn-secondary" (click)="goBack()"> Go Back</button>
+            <!-- <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a> -->
+        </div>
+
+        <div class="illustration">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="80" fill="#f97316" opacity="0.1" />
+                <path d="M100 40 L140 80 L140 140 L60 140 L60 80 Z" fill="#f97316" opacity="0.3" />
+                <rect x="75" y="95" width="20" height="45" fill="#f97316" />
+                <rect x="105" y="95" width="20" height="45" fill="#f97316" />
+                <path d="M70 80 L100 50 L130 80" stroke="#f97316" stroke-width="4" fill="none" />
+                <circle cx="100" cy="100" r="15" fill="#ffffff" opacity="0.5" />
+            </svg>
+        </div>
+    </div>
+</div>

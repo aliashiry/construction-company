@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   activeTab: string = 'home';
   showAuthModal: boolean = false;
 
+
   // استخدام BehaviorSubject مع null كقيمة افتراضية
   projectCountSubject = new BehaviorSubject<number | null>(null);
   totalFilesCountSubject = new BehaviorSubject<number | null>(null);
@@ -44,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
     let initPath = this.router.url || location.pathname || '';
     initPath = initPath.split('#').pop() || initPath;
     initPath = initPath.split('?')[0];
-    this.isStandalonePage = /^\/?(login|register|profile|upload-data)(\/|$)/i.test(initPath);
+    this.isStandalonePage = /^\/?(login|register|profile|upload|file-result|history |error)(\/|$)/i.test(initPath);
     this.updateActiveTab(initPath);
   }
 
@@ -73,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
         if (!path) path = location.pathname || '';
         path = path.split('#').pop() || path;
         path = path.split('?')[0];
-        const standalone = /^\/?(login|register|profile|upload-data)(\/|$)/i.test(path);
+        const standalone = /^\/?(login|register|profile|upload|file-result|history|error)(\/|$)/i.test(path);
         this.isStandalonePage = standalone;
         this.updateActiveTab(path);
       }
@@ -140,7 +141,7 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
     this.showAuthModal = false;
-    this.router.navigate(['/upload-data']);
+    this.router.navigate(['/upload']);
   }
 
   closeModal() {
