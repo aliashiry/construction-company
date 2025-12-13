@@ -11,5 +11,6 @@ export const THEME = {
 
 export const API = {
  // BASE_URL: 'http://meptakeoff.runasp.net/api'
-  BASE_URL: 'http://mepboq.runasp.net/api'
+  // BASE_URL: 'http://mepboq.runasp.net/api'
+  BASE_URL: 'https://hetask15-001-site1.qtempurl.com/api'
 };
