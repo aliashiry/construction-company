@@ -44,24 +44,6 @@
             >
           </div>
 
-          <!-- File Name -->
-          <div class="form-group">
-            <label for="fileName">
-              File Name
-              <span class="required">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="fileName" 
-              name="fileName" 
-              class="form-control" 
-              [(ngModel)]="selectedFileName" 
-              placeholder="Enter file name or it will be auto-filled"
-              [disabled]="isLoading"
-            >
-            <small class="help-text">You can edit the file name before sending</small>
-          </div>
-
           <!-- File Upload -->
           <div class="form-group">
             <label>
@@ -101,6 +83,24 @@
             </div>
 
             <div class="help-text">Maximum file size: 50MB</div>
+          </div>
+
+                    <!-- File Name -->
+          <div class="form-group">
+            <label for="fileName">
+              File Name<span class="Optional">(If you want to change the uploaded file name)</span>
+              <!-- <span class="Optional">*</span> -->
+            </label>
+            <input 
+              type="text" 
+              id="fileName" 
+              name="fileName" 
+              class="form-control" 
+              [(ngModel)]="selectedFileName" 
+              placeholder="Enter file name or it will be auto-filled"
+              [disabled]="isLoading"
+            >
+            <small class="help-text">You can edit the file name before sending</small>
           </div>
 
           <!-- Notes -->

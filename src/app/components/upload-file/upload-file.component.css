@@ -111,6 +111,12 @@
   font-size: 0.95rem;
 }
 
+.form-group span.Optional {
+  margin-top: -10px;
+  color: #64748b;
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
 .required {
   color: #ff6b35;
   margin-left: 3px;
