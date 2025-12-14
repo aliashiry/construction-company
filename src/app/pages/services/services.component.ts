@@ -46,6 +46,6 @@ export class ServicesComponent implements OnInit {
   }
 
   goToUpload() {
-    this.router.navigate(['/upload-data']);
+    this.router.navigate(['/upload']);
   }
 }

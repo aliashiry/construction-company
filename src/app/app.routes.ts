@@ -6,24 +6,16 @@ export const routes: Routes = [
   //   loadComponent: () => import('./app.component').then(m => m.AppComponent)
   //   },
   {
-    path: 'list',
-    loadComponent: () => import('./pages/list/list.component').then(m => m.ListPageComponent)
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'login',
-    loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
-  },
-  {
-    path: 'profile',
-    loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+    path: 'students',
+    loadChildren: () => import('./features/students/students.module').then(m => m.StudentsModule)
   },
   {
     path: 'services',
     loadComponent: () => import('./pages/services/services.component').then(m => m.ServicesComponent)
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./pages/register/register.component').then(m => m.RegisterComponent)
   },
   {
     path: 'upload',

@@ -5,9 +5,9 @@ import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { UploadCenterComponent } from './components/upload-center/upload-center.component';
-import { AuthService } from './services/auth.service';
-import { UploadService} from './services/upload.service';
-import { User } from './interfaces/user.interface';
+import { AuthService } from './core/services/auth.service';
+import { UploadService} from './core/services/upload.service';
+import { User } from './core/models/user.interface';
 
 @Component({
   selector: 'app-root',
@@ -27,11 +27,11 @@ export class AppComponent implements OnInit, OnDestroy {
   showAuthModal: boolean = false;
 
 
-  // استخدام BehaviorSubject مع null كقيمة افتراضية
+  // Use BehaviorSubject with null as default value
   projectCountSubject = new BehaviorSubject<number | null>(null);
   totalFilesCountSubject = new BehaviorSubject<number | null>(null);
 
-  // Observable للـ HTML
+  // Observable for HTML
   projectCount$ = this.projectCountSubject.asObservable();
   totalFilesCount$ = this.totalFilesCountSubject.asObservable();
 
@@ -45,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
     let initPath = this.router.url || location.pathname || '';
     initPath = initPath.split('#').pop() || initPath;
     initPath = initPath.split('?')[0];
-    this.isStandalonePage = /^\/?(login|register|profile|upload|file-result|history |error)(\/|$)/i.test(initPath);
+    this.isStandalonePage = /^\/?(auth|students|upload|file-result|history |error)(\/|$)/i.test(initPath);
     this.updateActiveTab(initPath);
   }
 
@@ -74,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
         if (!path) path = location.pathname || '';
         path = path.split('#').pop() || path;
         path = path.split('?')[0];
-        const standalone = /^\/?(login|register|profile|upload|file-result|history|error)(\/|$)/i.test(path);
+        const standalone = /^\/?(auth|students|upload|file-result|history|error)(\/|$)/i.test(path);
         this.isStandalonePage = standalone;
         this.updateActiveTab(path);
       }
@@ -130,7 +130,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onFileSelected(file: File) {
     // console.log('File selected:', file.name);
-    // بعد رفع الملف بنجاح، حدث الـ stats
+    // Update stats after successful file upload
     this.loadUserStats();
   }
 
@@ -150,16 +150,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   goToLogin() {
     this.showAuthModal = false;
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   goToRegister() {
     this.showAuthModal = false;
-    this.router.navigate(['/register']);
+    this.router.navigate(['/auth/register']);
   }
 
   navigateToProfile() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/students/profile']);
   }
 
   getUserInitials(): string {
@@ -184,7 +184,7 @@ async loadUserStats() {
   const userId = user.id;
 
   try {
-    // تحويل الـ Observable لـ Promise باستخدام lastValueFrom
+    // Convert Observable to Promise using lastValueFrom
     const projectCount = await lastValueFrom(this.uploadService.getFilesCountByProject(userId, 'defaultProject'));
     const filesCount = await lastValueFrom(this.uploadService.getFilesCount(userId));
 

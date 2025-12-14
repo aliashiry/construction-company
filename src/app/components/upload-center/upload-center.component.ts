@@ -1,8 +1,8 @@
 import { Component, Output, EventEmitter, HostListener, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services';
-import { UploadService } from '../../services/upload.service';
+import { AuthService } from '../../core/services/auth.service';
+import { UploadService } from '../../core/services/upload.service';
 
 @Component({
   selector: 'app-upload-center',
@@ -102,12 +102,12 @@ export class UploadCenterComponent {
 
   goToLogin() {
     this.showAuthModal = false;
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   goToRegister() {
     this.showAuthModal = false;
-    this.router.navigate(['/register']);
+    this.router.navigate(['/auth/register']);
   }
 }
 

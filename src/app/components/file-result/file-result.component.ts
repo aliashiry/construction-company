@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { UploadService } from '../../services/upload.service';
+import { UploadService } from '../../core/services/upload.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 
@@ -25,8 +25,8 @@ export class FileResultComponent implements OnInit, OnDestroy {
   done: boolean = false;
 
   private pollingSubscription?: Subscription;
-  private maxPollingTime = 600000; // 10 دقايق (600000 مللي ثانية)
-  private pollingInterval = 3000; // كل 3 ثوان
+  private maxPollingTime = 600000; // 10 minutes (600000 ms)
+  private pollingInterval = 3000; // Every 3 seconds
   private startTime = Date.now();
 
   constructor(
@@ -46,7 +46,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
   }
 
   startPolling() {
-    // ✅ جلب البيانات من localStorage بدلاً من Service
+    // ✅ Fetch data from localStorage instead of Service
     const savedDataStr = localStorage.getItem('lastFileOutput');
 
     if (!savedDataStr) {
@@ -68,7 +68,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
     this.projectName = projectName;
     this.fileName = fileName;
 
-    // ✅ التحقق من وجود ProjectName
+    // ✅ Check for ProjectName existence
     if (!projectName || projectName.trim() === '') {
       this.errorMessage = 'Project name is missing. Please upload again.';
       this.isLoading = false;
@@ -78,7 +78,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
     console.log('Starting polling with:', { userId, projectName, fileName });
     this.message = 'Waiting for file processing...';
 
-    // بدء الـ Polling: كل 3 ثوان نسأل الـ API
+    // Start Polling: Ask API every 3 seconds
     this.pollingSubscription = interval(this.pollingInterval)
       .pipe(
         takeWhile(() => (Date.now() - this.startTime) < this.maxPollingTime),
@@ -90,8 +90,8 @@ export class FileResultComponent implements OnInit, OnDestroy {
 
           if (response.status === 'Ready') {
             this.done = true;
-            this.isLoading = false;      // ✅ وقف الـ spinner فوراً
-            this.pollingSubscription?.unsubscribe(); // وقف الـ polling
+            this.isLoading = false;      // ✅ Stop spinner immediately
+            this.pollingSubscription?.unsubscribe(); // Stop polling
             this.fetchOutputFile(userId, projectName, fileName);
           }
           else if (response.status === 'Processing') {

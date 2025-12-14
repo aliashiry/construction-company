@@ -1,12 +1,9 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ListModeComponent } from '../../components/list-mode/list-mode.component';
-import { ListItem } from '../../interfaces';
+import { ListItem } from '../../../core/models/list-item.interface';
 
 @Component({
   selector: 'app-list-page',
-  standalone: true,
-  imports: [CommonModule, ListModeComponent],
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
 

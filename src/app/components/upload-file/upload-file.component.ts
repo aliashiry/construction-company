@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FileStorage } from '../../interfaces/FileStorage';
-import { UploadService } from '../../services/upload.service';
-import { AuthService } from '../../services/auth.service';
+import { FileStorage } from '../../core/models/FileStorage';
+import { UploadService } from '../../core/services/upload.service';
+import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -109,7 +109,7 @@ export class UploadFileComponent implements OnInit, OnDestroy {
       'https://hshama7md15.app.n8n.cloud/webhook/upload-file-dxf'
     ).subscribe({
       next: () => {
-        // حفظ البيانات في localStorage قبل التحويل
+        // Save data to localStorage before redirecting
         localStorage.setItem('lastFileOutput', JSON.stringify({
           userId: this.fileStorage.UserID,
           projectName: this.fileStorage.ProjectName,

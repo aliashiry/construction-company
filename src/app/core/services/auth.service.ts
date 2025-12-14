@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { User } from '../interfaces/user.interface';
+import { User } from '../models/user.interface';
 import { LOCAL_STORAGE_KEYS, API } from '../constants/app.constants';
 import { HttpClient } from '@angular/common/http';
 

@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ListItem } from '../../interfaces';
+import { ListItem } from '../../core/models/list-item.interface';
 
 @Component({
   selector: 'app-list-mode',

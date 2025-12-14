@@ -3,6 +3,9 @@ html {
   scroll-behavior: smooth;
 }
 
+html, body {
+  overflow-x: hidden;
+}
 /* Custom glow effect for buttons */
 ::-webkit-scrollbar {
   width: 8px;

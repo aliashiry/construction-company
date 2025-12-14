@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UploadService } from '../../services/upload.service';
-import { FileDataFromAPI } from '../../interfaces/FileStorage';
+import { UploadService } from '../../core/services/upload.service';
+import { FileDataFromAPI } from '../../core/models/FileStorage';
 
 @Component({
   selector: 'app-history',

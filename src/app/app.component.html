@@ -24,7 +24,7 @@
           [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">
           {{ isDarkTheme ? 'Light Mode' : 'Dark Mode' }}
         </button>
-        <a *ngIf="!isLoggedIn" routerLink="/login"
+        <a *ngIf="!isLoggedIn" routerLink="/auth/login"
           class="ml-3 bg-white text-navy px-4 py-2 rounded-full font-bold border border-slate-200 hover:bg-slate-100">Login</a>
         <div *ngIf="isLoggedIn" class="ml-3 flex items-center gap-3 cursor-pointer" (click)="navigateToProfile()">
           <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-white font-bold">
@@ -51,26 +51,27 @@
         <a href="#contact" (click)="setActiveTab('contact'); toggleMenu()"
           class="block py-3 px-4 rounded text-navy hover:bg-slate-100"
           [class.bg-orange]="activeTab === 'contact'">Contact</a>
-        <a *ngIf="!isLoggedIn" routerLink="/login" (click)="toggleMenu()"
+        <a *ngIf="!isLoggedIn" routerLink="/auth/login" (click)="toggleMenu()"
           class="block py-3 px-4 rounded bg-white text-navy border border-slate-200 text-center font-bold hover:bg-slate-100">Login</a>
-        <a *ngIf="isLoggedIn" routerLink="/profile" (click)="toggleMenu()"
+        <a *ngIf="isLoggedIn" routerLink="/students/profile" (click)="toggleMenu()"
           class="block py-3 px-4 rounded bg-orange text-white text-center font-bold">{{ currentUser?.name }}</a>
       </div>
     </div>
   </nav>
 
-  <div class="pt-20" *ngIf="!isStandalonePage"></div>
-
   <ng-container *ngIf="!isStandalonePage">
     <!-- Hero Section -->
-    <section class="relative w-full flex items-center justify-center overflow-hidden"
-      style="min-height: 70vh; padding: 4rem 0;">
+    <section class="relative w-full flex items-center justify-center overflow-hidden min-h-[70vh] py-0">
+
       <!-- Background Image -->
-      <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 z-0 w-full h-full">
         <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2400&fit=crop"
-          class="w-full h-full object-cover" alt="Construction Background">
-        <div class="absolute inset-0" [style.background]="isDarkTheme ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)'"></div>
+          alt="Construction Background" class="w-full h-full object-cover object-center" />
+
+        <div class="absolute inset-0" [style.background]="isDarkTheme ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)'">
+        </div>
       </div>
+
 
       <!-- Scroll Indicator -->
       <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 scroll-indicator">
@@ -133,7 +134,7 @@
             </div>
 
             <!-- Quick Stats -->
-            <div class="flex md:flex-col gap-4">
+            <div class="flex md:flex-col">
               <div class="text-center p-4 rounded-2xl"
                 [style.background]="isDarkTheme ? 'rgba(249,115,22,0.1)' : 'rgba(249,115,22,0.05)'">
                 <div class="text-3xl font-black text-orange">
@@ -163,7 +164,8 @@
           </div>
         </div>
       </div>
-      <button routerLink="history" class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
+      <button routerLink="history"
+        class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
         Your History
       </button>
     </section>
@@ -225,25 +227,6 @@
 
       </div>
     </section>
-
-    <!-- Upload Center Section -->
-    <section
-      style="padding: 5rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;"
-      [ngClass]="isDarkTheme ? 'bg-dark' : 'bg-light'">
-      <!-- Downward Arrow -->
-      <div class="mb-8 animate-bounce">
-        <svg class="w-12 h-12 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
-      </div>
-      <!-- Title -->
-      <h2 class="text-4xl md:text-5xl font-black mb-12 text-center" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
-        How to Use <span style="color: #f97316;">Our Service</span>
-      </h2>
-      <app-upload-center [isDarkTheme]="isDarkTheme" (fileSelected)="onFileSelected($event)"></app-upload-center>
-    </section>
-
-
     <!-- Our Value Proposition Section -->
     <section class="py-20 md:py-32 px-6" [ngClass]="isDarkTheme ? 'bg-dark-gradient-1' : 'bg-light-gradient-1'">
       <div class="max-w-7xl mx-auto">
@@ -312,8 +295,7 @@
 
       <div class="relative z-10 max-w-3xl mx-auto">
         <div class="text-center mb-12">
-          <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Ready to
-            Start Your <span style="color: #f97316;">Project?</span></h2>
+          <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">How can we help you?</h2>
           <p class="text-lg" [style.color]="isDarkTheme ? '#d1d5db' : '#6b7280'">Let's discuss your construction and
             engineering needs</p>
         </div>
@@ -339,7 +321,7 @@
             [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'"
             [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
           <button type="submit"
-            class="glow-orange sm:col-span-2 bg-orange hover:bg-orange/90 text-white font-black text-xl px-12 py-6 rounded-full shadow-2xl transition transform hover:scale-105 duration-300">
+            class="glow-orange sm:col-span-2 bg-orange hover:bg-orange/90 text-white font-black text-xlg px-5 py-4 rounded-full shadow-2xl transition transform hover:scale-105 duration-300">
             SEND REQUEST
           </button>
         </form>

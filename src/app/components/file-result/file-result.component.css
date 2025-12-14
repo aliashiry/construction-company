@@ -189,7 +189,7 @@ tbody tr:nth-child(even) {
 
 tbody tr:hover {
   background-color: #e3f2fd;
-  /* إزالة التأثيرات التي تسبب ظهور الخط */
+  /* Remove effects that cause line appearance */
 }
 
 tbody tr:last-child td:first-child {
