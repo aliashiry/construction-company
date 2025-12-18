@@ -144,7 +144,7 @@ input:focus, textarea:focus {
 }
 
 /* Navbar styles */
-nav { position: relative; }
+/* nav { position: relative; }  */
 nav .backdrop-blur-md { backdrop-filter: blur(6px); }
 
 /* Footer placeholders */

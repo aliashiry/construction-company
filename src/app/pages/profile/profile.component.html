@@ -1,39 +1,289 @@
-<div class="profile-container">
-  <div class="profile-card" *ngIf="user">
-    <div class="profile-header">
-      <div class="profile-avatar">
-        <span class="profile-initials">{{ getInitials() }}</span>
+<div class="profile-page" [class.dark-mode]="isDarkTheme">
+  
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="container">
+      <div class="nav-content">
+        <button class="nav-back-btn" (click)="navigateToBack()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span>Back</span>
+        </button>
+        <button class="nav-logo" (click)="navigateTo('/')">
+          <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="logo-text">My Home</span>
+        </button>
       </div>
-      <h1 class="profile-name">{{ user.name }}</h1>
     </div>
+  </div>
 
-    <div class="profile-info">
-      <div class="info-item">
-        <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-        </svg>
-        <div class="info-content">
-          <label>name</label>
-          <p>{{ user.name }}</p>
+  <!-- Hero Section with Cover -->
+  <div class="profile-hero">
+    <div class="cover-image"></div>
+    <div class="container">
+      <div class="profile-header">
+        <div class="avatar-section">
+          <div class="avatar-wrapper">
+            <div class="avatar-ring"></div>
+            <div class="avatar">
+              {{ getUserInitials() }}
+            </div>
+            <div class="status-indicator"></div>
+          </div>
+        </div>
+        
+        <div class="user-info">
+          <h1 class="user-name">{{ currentUser?.name }}</h1>
+          <div class="user-meta">
+            <span class="meta-item">
+              <i class="icon-mail"></i>
+              {{ currentUser?.email }}
+            </span>
+            <span class="meta-item">
+              <i class="icon-calendar"></i>
+              Member since 2024
+            </span>
+          </div>
+        </div>
+        
+        <div class="profile-actions">
+          <button class="btn btn-primary" (click)="navigateTo('/workon')">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            View My Work
+          </button>
+          <button class="btn btn-secondary" (click)="navigateTo('/history')">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            History
+          </button>
+          <button class="btn btn-secondary" (click)="navigateTo('/new-project')">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            New Project
+          </button>
+          <button class="btn btn-logout" (click)="handleLogout()">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container profile-content">
+    <div class="row g-4">
+      
+      <!-- Left Column - Stats & Info -->
+      <div class="col-lg-4">
+        
+        <!-- Statistics Card -->
+        <div class="card stats-card">
+          <div class="card-header">
+            <h3>Statistics</h3>
+          </div>
+          <div class="card-body">
+            <div class="stat-item">
+              <div class="stat-icon projects">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">
+                  <ng-container *ngIf="projectCount$ | async as count; else loading">
+                    {{ count }}
+                  </ng-container>
+                  <ng-template #loading>
+                    <span class="loading-dots">...</span>
+                  </ng-template>
+                </div>
+                <div class="stat-label">Active Projects</div>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon files">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">
+                  <ng-container *ngIf="totalFilesCount$ | async as count; else loading">
+                    {{ count }}
+                  </ng-container>
+                  <ng-template #loading>
+                    <span class="loading-dots">...</span>
+                  </ng-template>
+                </div>
+                <div class="stat-label">Total Uploads</div>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon completed">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">
+                  <ng-container *ngIf="completedTasks$ | async as count; else loading">
+                    {{ count }}
+                  </ng-container>
+                  <ng-template #loading>
+                    <span class="loading-dots">...</span>
+                  </ng-template>
+                </div>
+                <div class="stat-label">Completed Tasks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links Card -->
+        <div class="card quick-links-card">
+          <div class="card-header">
+            <h3>Quick Links</h3>
+          </div>
+          <div class="card-body">
+            <button class="quick-link" (click)="navigateTo('/history')">
+              <div class="link-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="link-content">
+                <div class="link-title">History</div>
+                <div class="link-desc">View your activity timeline</div>
+              </div>
+              <div class="link-arrow">→</div>
+            </button>
+            
+            <button class="quick-link" (click)="navigateTo('/settings')">
+              <div class="link-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div class="link-content">
+                <div class="link-title">Settings</div>
+                <div class="link-desc">Manage your preferences</div>
+              </div>
+              <div class="link-arrow">→</div>
+            </button>
+            
+            <button class="quick-link" (click)="navigateTo('/upload')">
+              <div class="link-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+              </div>
+              <div class="link-content">
+                <div class="link-title">Upload</div>
+                <div class="link-desc">Add new files and documents</div>
+              </div>
+              <div class="link-arrow">→</div>
+            </button>
+
+            <!-- <button class="quick-link logout-link" (click)="handleLogout()">
+              <div class="link-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+              </div>
+              <div class="link-content">
+                <div class="link-title">Logout</div>
+                <div class="link-desc">Sign out of your account</div>
+              </div>
+              <div class="link-arrow">→</div>
+            </button> -->
+          </div>
         </div>
       </div>
 
-      <div class="info-item">
-        <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-        <div class="info-content">
-          <label>Email</label>
-          <p>{{ user.email }}</p>
+      <!-- Right Column - Activity & Projects -->
+      <div class="col-lg-8">
+        
+        <!-- Recent Activity Card -->
+        <div class="card activity-card">
+          <div class="card-header">
+            <h3>Recent Activity</h3>
+            <button class="btn-link">View All</button>
+          </div>
+          <div class="card-body">
+            <div class="activity-timeline">
+              <ng-container *ngIf="recentActivity$ | async as activities; else noActivity">
+                <ng-container *ngIf="activities.length > 0; else noActivity">
+                  <div *ngFor="let activity of activities" class="activity-item">
+                    <div class="activity-dot"></div>
+                    <div class="activity-content">
+                      <div class="activity-header">
+                        <h4>{{ activity.title }}</h4>
+                        <span class="activity-time">{{ activity.timeAgo }}</span>
+                      </div>
+                      <p>{{ activity.description }}</p>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <ng-template #noActivity>
+                <div class="activity-item">
+                  <div class="activity-content">
+                    <p style="color: #999; text-align: center;">No recent activity</p>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Projects Card -->
+        <div class="card projects-card">
+          <div class="card-header">
+            <h3>Recent Projects</h3>
+            <button class="btn-link" (click)="navigateTo('/work-on')">View All</button>
+          </div>
+          <div class="card-body">
+            <div class="projects-grid">
+              <ng-container *ngIf="recentProjects$ | async as projects; else noProjects">
+                <ng-container *ngIf="projects.length > 0; else noProjects">
+                  <div *ngFor="let project of projects" class="project-item">
+                    <div class="project-icon">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                      </svg>
+                    </div>
+                    <div class="project-info">
+                      <h4>{{ project.name }}</h4>
+                      <p>{{ project.filesCount }} files · Updated {{ project.lastUpdated }}</p>
+                      <div class="project-progress">
+                        <div class="progress-bar" [style.width.%]="project.progressPercent"></div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <ng-template #noProjects>
+                <div style="text-align: center; color: #999; padding: 20px; width: 100%;">
+                  <p>No projects yet</p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <button class="logout-button" (click)="logout()">
-      <svg class="logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-      </svg>
-      Logout
-    </button>
   </div>
 </div>

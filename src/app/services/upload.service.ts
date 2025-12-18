@@ -41,7 +41,7 @@ export class UploadService {
       projectName: fileStorage.ProjectName,
       fileName: fileStorage.FileName,
       notes: fileStorage.Notes || '',
-      forwardUrl: forwardUrl || 'https://hshama7md15.app.n8n.cloud/webhook/upload-file-dxf'
+      forwardUrl:`https://hetask15.app.n8n.cloud/webhook/upload-file-dxf`
     });
 
     return this.http.post(`${this.API_BASE_URL}/input?${params.toString()}`, formData);
@@ -118,6 +118,13 @@ export class UploadService {
     return this.http.get<FullFileDataResponse>(`${this.API_BASE_URL}/files/full-data`, { params });
   }
 
+  getFullFileData2(userId: number, projectName: string): Observable<FullFileDataResponse> {
+    const params = new HttpParams()
+      .set('userId', userId.toString())
+      .set('projectName', projectName);
+    return this.http.get<FullFileDataResponse>(`${this.API_BASE_URL}/files`, { params });
+  }
+
   // -----------------------------
   // Get all projects for a user
   // -----------------------------
@@ -131,7 +138,7 @@ export class UploadService {
   // -----------------------------
   getProjectsCount(userId: number): Observable<{ ProjectCount: number }> {
     const params = new HttpParams().set('userId', userId.toString());
-    return this.http.get<{ ProjectCount: number }>(`${this.API_BASE_URL}/projects/count`, { params });
+    return this.http.get<{ ProjectCount: number }>(`${this.API_BASE_URL}/projects`, { params });
   }
 
   // -----------------------------

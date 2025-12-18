@@ -19,7 +19,7 @@ export class RegisterComponent {
   loading = false;
   error = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   onSubmit() {
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
@@ -32,14 +32,16 @@ export class RegisterComponent {
     }
     this.loading = true;
     this.error = '';
+
     this.authService.register(this.name, this.email, this.password).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/']);
+        // ما تعملش login تلقائي، روح لصفحة اللوجن وأظهر رسالة نجاح
+        this.router.navigate(['/login'], { queryParams: { registered: 'true' } });
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        this.error = 'Registration failed';
+        this.error = err || 'Registration failed';
       }
     });
   }

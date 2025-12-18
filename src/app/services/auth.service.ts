@@ -36,24 +36,24 @@ export class AuthService {
 
   }
 
-  register(fullName: string, email: string, password: string): Observable<User> {
-    const url = `${API.BASE_URL}/Auth/register`;
-    return this.http.post<User>(url, { fullName, email, password }).pipe(
-      map(res => this.normalizeUser(res)),
-      tap(user => {
-        localStorage.setItem(`CURRENT_USER`, JSON.stringify(user));
-        this.currentUserSubject.next(user);
-      }),
-      catchError(err => {
-        return throwError(() => err);
-      })
-    );
-  }
+ register(fullName: string, email: string, password: string): Observable<any> {
+  const url = `${API.BASE_URL}/Auth/register`;
+  return this.http.post<any>(url, { fullName, email, password }).pipe(
+    map(res => {
+      // هنا بس نرجع الـ response أو true لو نجح
+      return res; // أو return true;
+    }),
+    catchError(err => {
+      console.error('Register error:', err);
+      return throwError(() => err.error?.message || 'Registration failed');
+    })
+  );
+}
 
-  logout(): void {
-    localStorage.removeItem('CURRENT_USER');
-    this.currentUserSubject.next(null);
-  }
+    logout(): void {
+      localStorage.removeItem('CURRENT_USER');
+      this.currentUserSubject.next(null);
+    }
 
   isLoggedIn(): boolean {
     return !!this.currentUserSubject.value;

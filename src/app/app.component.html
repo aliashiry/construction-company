@@ -2,7 +2,7 @@
   [style.color]="isDarkTheme ? '#ffffff' : '#0f172a'">
 
   <!-- Navbar -->
-  <nav *ngIf="!isStandalonePage" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md"
+  <nav *ngIf="!isStandalonePage" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md shadow-md border-b"
     [style.background-color]="isDarkTheme ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.9)'">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3" *ngIf="!isStandalonePage">
@@ -14,7 +14,7 @@
         <a (click)="setActiveTab('home')" href="/" [class.active-tab]="activeTab === 'home'"
           [style.color]="activeTab === 'home' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Home</a>
-        <a (click)="setActiveTab('services')" routerLink="/services" [class.active-tab]="activeTab === 'services'"
+        <a (click)="setActiveTab('services')" href="#services" [class.active-tab]="activeTab === 'services'"
           [style.color]="activeTab === 'services' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Services</a>
         <a (click)="setActiveTab('contact')" href="#contact" [class.active-tab]="activeTab === 'contact'"
@@ -59,57 +59,55 @@
     </div>
   </nav>
 
-  <div class="pt-20" *ngIf="!isStandalonePage"></div>
+  <!-- <div class="pt-20" *ngIf="!isStandalonePage"></div> -->
 
   <ng-container *ngIf="!isStandalonePage">
     <!-- Hero Section -->
     <section class="relative w-full flex items-center justify-center overflow-hidden"
-      style="min-height: 70vh; padding: 4rem 0;">
-      <!-- Background Image -->
-      <div class="absolute inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2400&fit=crop"
-          class="w-full h-full object-cover" alt="Construction Background">
-        <div class="absolute inset-0" [style.background]="isDarkTheme ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)'"></div>
-      </div>
+      style="min-height:100vh; padding:0; background-image:url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2400&fit=crop'); background-size:cover; background-position:center; background-attachment:fixed;">
+
+      <!-- Overlay -->
+      <div class="absolute inset-0" style="background-color:rgba(0,0,0,0.5);"></div>
 
       <!-- Scroll Indicator -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 scroll-indicator">
+      <div class="absolute bottom-4 start-50 translate-middle-x z-40 scroll-indicator">
         <svg class="w-6 h-6 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
         </svg>
       </div>
 
       <!-- Hero Content -->
-      <div class="relative z-30 text-center px-6 max-w-4xl mx-auto">
+      <div class="relative z-30 text-center px-3 max-w-4xl mx-auto">
         <h1 class="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-6 tracking-tight text-white">
           BUILDING THE FUTURE<br>
-          <span style="color: #f97316;">ONE STRONG FOUNDATION AT A TIME.</span>
+          <span style="color:#f97316;">ONE STRONG FOUNDATION AT A TIME.</span>
         </h1>
         <p class="text-lg md:text-xl max-w-2xl mx-auto text-gray-200">
           Premium construction and engineering excellence for modern infrastructure
         </p>
       </div>
+
     </section>
 
     <!-- User Info Section (Only shown when logged in) -->
-    <section *ngIf="isLoggedIn" class="py-12 px-6"
+    <!-- <section *ngIf="isLoggedIn" class="py-12 px-6"
       [style.background]="isDarkTheme ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' : 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)'">
       <div class="max-w-4xl mx-auto">
         <div class="backdrop-blur rounded-3xl p-8 md:p-10 shadow-2xl border"
           [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'"
           [style.border-color]="isDarkTheme ? 'rgba(249,115,22,0.3)' : 'rgba(249,115,22,0.2)'">
 
-          <div class="flex flex-col md:flex-row items-center gap-6">
+          <div class="flex flex-col md:flex-row items-center gap-6"> -->
             <!-- User Avatar -->
-            <div class="flex-shrink-0">
+            <!-- <div class="flex-shrink-0">
               <div
                 class="w-24 h-24 rounded-full bg-gradient-to-br from-orange to-orange/70 flex items-center justify-center text-white font-black text-3xl shadow-xl">
                 {{ getUserInitials() }}
               </div>
-            </div>
+            </div> -->
 
             <!-- User Info -->
-            <div class="flex-1 text-center md:text-left">
+            <!-- <div class="flex-1 text-center md:text-left">
               <h3 class="text-3xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
                 Welcome back, <span style="color: #f97316;">{{ currentUser?.name }}</span>!
               </h3>
@@ -130,10 +128,10 @@
                   Start New Project
                 </button>
               </div>
-            </div>
+            </div> -->
 
             <!-- Quick Stats -->
-            <div class="flex md:flex-col gap-4">
+            <!-- <div class="flex md:flex-col gap-4">
               <div class="text-center p-4 rounded-2xl"
                 [style.background]="isDarkTheme ? 'rgba(249,115,22,0.1)' : 'rgba(249,115,22,0.05)'">
                 <div class="text-3xl font-black text-orange">
@@ -163,13 +161,14 @@
           </div>
         </div>
       </div>
-      <button routerLink="history" class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
+      <button routerLink="history"
+        class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
         Your History
       </button>
-    </section>
+    </section> -->
 
     <!-- Our Services Section -->
-    <section class="py-20 md:py-32 px-6"
+    <section id="services" class="py-20 md:py-32 px-6"
       [style.background]="isDarkTheme ? 'linear-gradient(to bottom, #0f172a, #000)' : 'linear-gradient(to bottom, #f1f5f9, #e2e8f0)'">
       <div class="max-w-7xl mx-auto">
         <div class="text-center mb-16 md:mb-20">
@@ -300,7 +299,7 @@
 
 
     <!-- Contact Form Section -->
-    <section class="py-20 md:py-32 px-6 relative overflow-hidden">
+    <section id="contact" class="py-20 md:py-32 px-6 relative overflow-hidden">
       <div class="absolute inset-0" [ngClass]="isDarkTheme ? 'bg-dark-gradient-2' : 'bg-light-gradient-2'"></div>
       <div class="absolute inset-0 opacity-20">
         <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2400"
@@ -365,7 +364,7 @@
             <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Quick Links</h5>
             <ul class="space-y-2" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">
               <li><a href="#">Home</a></li>
-              <li><a href="#">Services</a></li>
+              <li><a href="#services">Services</a></li>
               <li><a href="#projects">Projects</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>

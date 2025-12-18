@@ -30,6 +30,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/upload-file/upload-file.component').then(m => m.UploadFileComponent)
   },
   {
+    path: 'new-project',
+    redirectTo: 'upload',
+    pathMatch: 'full'
+  },
+  {
     path: 'file-result',
     loadComponent: () => import('./components/file-result/file-result.component').then(m => m.FileResultComponent)
   },
@@ -41,10 +46,9 @@ export const routes: Routes = [
     path: 'error',
     loadComponent: () => import('./pages/notfound/notfound.component').then(m => m.NotfoundComponent)
   },
-  // {
-  //   path: '**',
-  //   redirectTo: 'error',
-  //   pathMatch: 'full'
-  // }
+  {
+    path: 'workon',
+    loadComponent: () => import('./components/work-on/work-on.component').then(m => m.WorkOnComponent)
+  }
 ];
 

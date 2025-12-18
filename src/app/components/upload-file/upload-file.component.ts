@@ -32,6 +32,10 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   selectedFileName = '';
   errorMessage = '';
   successMessage = '';
+  // Projects list for select
+  projects: string[] = [];
+  selectedProject = '';
+  showOther = false;
 
   constructor(
     private uploadService: UploadService,
@@ -50,11 +54,44 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     const currentUser = this.authService.currentUserValue;
     if (currentUser && currentUser.id) {
       this.fileStorage.UserID = parseInt(currentUser.id, 10) || 123;
+      this.loadProjects();
     }
   }
 
   ngOnDestroy() {
     this.stopPolling();
+  }
+
+  private loadProjects(): void {
+    if (!this.fileStorage.UserID) return;
+    this.uploadService.getAllProjects(this.fileStorage.UserID)
+      .subscribe({
+        next: (res) => {
+          this.projects = Array.isArray(res) ? res : [];
+          if (!this.projects.includes('Other')) this.projects.push('Other');
+          // initialize selectedProject based on existing fileStorage.ProjectName
+          if (this.fileStorage.ProjectName) {
+            if (this.projects.includes(this.fileStorage.ProjectName)) {
+              this.selectedProject = this.fileStorage.ProjectName;
+              this.showOther = false;
+            } else {
+              this.selectedProject = 'Other';
+              this.showOther = true;
+            }
+          }
+        },
+        error: (err) => console.error('Failed to load projects', err)
+      });
+  }
+
+  onProjectSelect(value: string) {
+    if (value === 'Other') {
+      this.showOther = true;
+      this.fileStorage.ProjectName = '';
+    } else {
+      this.showOther = false;
+      this.fileStorage.ProjectName = value;
+    }
   }
 
   onFileSelected(event: Event) {
@@ -105,9 +142,7 @@ export class UploadFileComponent implements OnInit, OnDestroy {
 
     // Submit file to API
     this.uploadService.submitToInput(
-      this.fileStorage,
-      'https://hshama7md15.app.n8n.cloud/webhook/upload-file-dxf'
-    ).subscribe({
+      this.fileStorage ).subscribe({
       next: () => {
         // حفظ البيانات في localStorage قبل التحويل
         localStorage.setItem('lastFileOutput', JSON.stringify({
