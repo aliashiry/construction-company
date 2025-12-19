@@ -3,7 +3,7 @@
 A modern Angular single-page application for managing construction projects (MEP). 
 Core features include authentication, project file upload, file processing results, project history, user profile and a services catalogue.
 
-Repository: https://github.com/aliashiry/construction-company
+Live Demo : https://aliashiry.github.io/construction-company
 
 ---
 
