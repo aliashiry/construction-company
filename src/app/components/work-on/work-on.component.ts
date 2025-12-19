@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { WorkOnService } from './../../services/work-on.service';
+import { UploadService } from '../../services/upload.service';
 import { FileDataFromAPI, FileStorage } from '../../interfaces/FileStorage';
 import { ProjectData } from '../../interfaces/FileStorage';
 import { AddWorkerRequest } from '../../interfaces/FileStorage';
@@ -109,7 +110,8 @@ export class WorkOnComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private workOnService: WorkOnService
+    private workOnService: WorkOnService,
+    private uploadService: UploadService
   ) {}
 
   ngOnInit() {
@@ -372,24 +374,46 @@ export class WorkOnComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Download file
+   * Download output file (Column 3)
+   * Uses UploadService.downloadOutputFile() - same as History component
    * Used in HTML: (click)="downloadFile(file)"
    */
   downloadFile(file: FileDataFromAPI) {
-    this.workOnService.downloadFile(this.currentUserID, file.projectName, file.fileName)
+    console.log('📥 Downloading output file:', { 
+      userId: this.currentUserID, 
+ projectName: file.projectName, 
+      fileName: file.fileName 
+    });
+
+    this.uploadService.downloadOutputFile(this.currentUserID, file.projectName, file.fileName)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
+   .subscribe({
+     next: (blob: Blob) => {
+   console.log('✅ File downloaded successfully');
+      
+          // Extract file name without extension
+const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
+   const downloadFileName = `${fileNameWithoutExt}_output.csv`;
+       
+          // Create download link
+  const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = file.fileName;
-          link.click();
+          link.download = downloadFileName;
+   
+          // Trigger download
+          document.body.appendChild(link);
+       link.click();
+          document.body.removeChild(link);
+          
+       // Cleanup
           window.URL.revokeObjectURL(url);
+          
+    console.log('📥 File saved as:', downloadFileName);
         },
-        error: (err) => {
-          console.error('Error downloading file:', err);
-          alert('Failed to download file');
+    error: (err) => {
+     console.error('❌ Error downloading file:', err);
+          alert(`Failed to download file: ${err.error?.message || err.message || 'Unknown error'}`);
         }
       });
   }

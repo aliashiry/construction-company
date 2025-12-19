@@ -200,6 +200,27 @@ tbody tr:last-child td:last-child {
   border-bottom-right-radius: 12px;
 }
 
+/* Editable input styling */
+.table-container input {
+ width:100%;
+ padding:8px10px;
+ border:1px solid #d1d5db;
+ border-radius:6px;
+ font-size:14px;
+ box-sizing: border-box;
+}
+
+/* Total row styles */
+.total-row {
+ font-weight:700;
+ background: linear-gradient(90deg, #f1f5f9, #e2e8f0);
+}
+
+/* Prevent editing last column visually */
+.table-container td.readonly {
+ background: #f8fafc;
+}
+
 /* Action Buttons at Bottom */
 .actions {
   margin-top: 30px;

@@ -224,6 +224,10 @@
 .th-output { border-bottom: 4px solid #34d399; }
 .th-notes { border-bottom: 4px solid #a78bfa; }
 .th-date { border-bottom: 4px solid #f472b6; }
+.th-view {
+  border-bottom: 4px solid #f97316;
+  text-align: center;
+}
 
 /* Table Body */
 .table-row {
@@ -392,6 +396,46 @@
 
 .date-text {
   font-size: 0.875rem;
+}
+
+/* View Result Button (NEW) */
+.td-view {
+  text-align: center;
+}
+
+.view-result-btn {
+display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  color: #92400e;
+  border: 2px solid #f97316;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.view-result-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fdba74 0%, #f97316 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+  border-color: #ea580c;
+}
+
+.view-result-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.view-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
 }
 
 /* Table Footer */

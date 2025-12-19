@@ -51,7 +51,8 @@
             <th class="th-project">Project Name</th>
             <th class="th-input">Input File</th>
             <th class="th-output">Output File</th>
-            <th class="th-notes">notes</th>
+            <th class="th-view">View Result</th>
+            <th class="th-notes">Notes</th>
             <th class="th-date">Date Created</th>
           </tr>
         </thead>
@@ -83,11 +84,27 @@
                 <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                <span class="btn-text">{{ item.fileName }}</span>
+                <span class="btn-text">{{ item.fileName }}_output</span>
               </button>
             </td>
 
-            <!-- notes Column -->
+            <!-- View Result Column (NEW) -->
+            <td class="td-view">
+              <button 
+                class="view-result-btn" 
+                (click)="viewFileResult(item.projectName, item.fileName)"
+                [disabled]="loadingFileId === item.projectName + '_' + item.fileName"
+              >
+                <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span class="btn-text">
+                  {{ loadingFileId === item.projectName + '_' + item.fileName ? 'Loading...' : 'View' }}
+                </span>
+              </button>
+            </td>
+
+            <!-- Notes Column -->
             <td class="td-notes">
               <div class="notes-cell" *ngIf="item.notes">
                 <svg class="notes-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

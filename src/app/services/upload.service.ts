@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { FileStorage, FileDataFromAPI, FullFileDataResponse } from '../interfaces/FileStorage';
+import { FileStorage, FullFileDataResponse } from '../interfaces/FileStorage';
 import { API } from '../constants/app.constants';
 
 @Injectable({ providedIn: 'root' })
@@ -52,9 +52,9 @@ export class UploadService {
   // -------------------------------------
   checkOutput(userId: number, projectName: string, fileName: string): Observable<any> {
     const params = new HttpParams()
-      .set('userId', userId)
-      .set('projectName', projectName)
-      .set('fileName', fileName);
+      .set('userId', userId.toString())
+      .set('projectName', projectName.trim())
+      .set('fileName', fileName.trim());
 
     return this.http.get(`${this.API_BASE_URL}/output/base64`, { params });
   }
@@ -64,9 +64,9 @@ export class UploadService {
   // -------------------------------------
   getOutputFile(userId: number, projectName: string, fileName: string): Observable<any> {
     const params = new HttpParams()
-      .set('userId', userId)
-      .set('projectName', projectName)
-      .set('fileName', fileName);
+      .set('userId', userId.toString())
+      .set('projectName', projectName.trim())
+      .set('fileName', fileName.trim());
 
     return this.http.get(`${this.API_BASE_URL}/output/base64`, { params });
   }
@@ -76,38 +76,107 @@ export class UploadService {
   // -------------------------------------
   checkOutputStatus(userId: number, projectName: string, fileName: string): Observable<any> {
     const params = new HttpParams()
-      .set('userId', userId)
-      .set('projectName', projectName)
-      .set('fileName', fileName);
+      .set('userId', userId.toString())
+      .set('projectName', projectName.trim())
+      .set('fileName', fileName.trim());
 
     return this.http.get(`${this.API_BASE_URL}/output/status`, { params });
   }
 
   getOutputFileBase64(userId: number, projectName: string, fileName: string) {
+    // تنظيف البيانات
+    const cleanProjectName = projectName.trim();
+    const cleanFileName = fileName.trim();
+
+    console.log('🔍 getOutputFileBase64 called with:', { 
+      userId, 
+      cleanProjectName, 
+      cleanFileName,
+      projectNameIsString: typeof projectName === 'string'
+    });
+
+    // تأكد أن جميع البيانات strings
     return this.http.get(
       `${this.API_BASE_URL}/output/base64`,
-      { params: { userId, projectName, fileName } }
+      {
+        params: {
+          userId: userId.toString(),
+          projectName: cleanProjectName,
+          fileName: cleanFileName
+        }
+    }
     );
   }
 
   downloadOutputFile(userId: number, projectName: string, fileName: string): Observable<Blob> {
     return this.http.get(`${this.API_BASE_URL}/output/download`, {
-      params: { userId, projectName, fileName },
+      params: { 
+        userId: userId.toString(),
+        projectName: projectName.trim(),
+        fileName: fileName.trim()
+      },
       responseType: 'blob'
     });
   }
 
-  
-
   downloadAllFiles(userId: number, projectName: string, fileName: string): Observable<Blob> {
     return this.http.get(`${this.API_BASE_URL}/download/all`, {
-      params: {
+ params: {
         userId: userId.toString(),
-        projectName: projectName,
-        fileName: fileName
-      },
+        projectName: projectName.trim(),
+ fileName: fileName.trim()
+    },
       responseType: 'blob'
     });
+  }
+
+  // ============================================
+  // ✅ NEW: حفظ ملف الإخراج المعدّل
+  // ============================================
+  saveOutputFile(userId: number, managerId: number, projectName: string, fileName: string, fileBase64: string): Observable<any> {
+    const params = new URLSearchParams({
+    userId: userId.toString(),
+      managerId: managerId.toString(),
+      projectName: projectName.trim(),
+      fileName: fileName.trim()
+    });
+
+    const payload = {
+      fileBase64: fileBase64
+    };
+
+    console.log('💾 Sending save request to API:', {
+      url: `${this.API_BASE_URL}/output?${params.toString()}`,
+      params: { userId, managerId, projectName, fileName },
+   fileBase64Length: fileBase64?.length || 0
+    });
+
+    return this.http.post(
+      `${this.API_BASE_URL}/output?${params.toString()}`,
+  payload
+  );
+  }
+
+  // ============================================
+  // ✅ ALT: حفظ باستخدام FormData (إذا كان الـ API يتوقع ذلك)
+  // ============================================
+  saveOutputFileFormData(userId: number, managerId: number, projectName: string, fileName: string, csvBlob: Blob): Observable<any> {
+const formData = new FormData();
+    formData.append('userId', userId.toString());
+    formData.append('managerId', managerId.toString());
+    formData.append('projectName', projectName.trim());
+    formData.append('fileName', fileName.trim());
+    formData.append('outputFile', csvBlob, fileName);
+
+    console.log('💾 Sending FormData save request to API:', {
+      url: `${this.API_BASE_URL}/output`,
+      params: { userId, managerId, projectName, fileName }
+    });
+
+    return this.http.post(
+   `${this.API_BASE_URL}/output`,
+      formData
+    );
   }
 
   // -------------------------------------
