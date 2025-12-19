@@ -16,7 +16,7 @@ import { WorkerData } from '../../interfaces/FileStorage';
 @Component({
   selector: 'app-work-on',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule , FormsModule],
   templateUrl: './work-on.component.html',
   styleUrls: ['./work-on.component.css']
 })
@@ -232,47 +232,6 @@ export class WorkOnComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  /**
- * Load actual files for each project
- */
-  // private loadProjectFilesCounts() {
-  //   this.projectFilesWithCounts = [];
-
-  //   console.log('🔍 Loading files for projects:', this.projects);
-  //   console.log('🔍 Assigned files:', this.assignedFiles);
-
-  //   // Use the already loaded assignedFiles and just display them
-  //   this.projectFilesWithCounts = this.assignedFiles.map(file => ({
-  //     projectName: file.projectName,
-  //     managerName: file.managerName,
-  //     fileName: file.fileName,
-  //     managerID: file.managerID,
-  //     dateCreate: file.assignedDate,
-  //     notes: file.notes
-  //   })).sort((a, b) => a.projectName.localeCompare(b.projectName));
-
-  //   console.log('✅ Project files loaded:', this.projectFilesWithCounts);
-  // }
-
-
-  
-  /**
- * Load actual files for each project and create projectFilesWithCounts array
- */
-/**
- * Load actual files for each project and create projectFilesWithCounts array
- */
-/**
- * Load actual files for each project and create projectFilesWithCounts array
- */
-/**
- * Load actual files for each project and create projectFilesWithCounts array
- */
-
-/**
- * Load actual files for each project and create projectFilesWithCounts array
- */
 
 /**
  * Load actual files for each project and create projectFilesWithCounts array

@@ -27,6 +27,8 @@ export class FileResultComponent implements OnInit, OnDestroy {
 
   editing: boolean = false;
   backupData: any[] = [];
+  isSaving: boolean = false; // Add loading state for save operation
+  isDownloading: boolean = false; // Add loading state for download
 
   private pollingSubscription?: Subscription;
   private maxPollingTime = 600000; // 10 دقايق
@@ -55,34 +57,31 @@ export class FileResultComponent implements OnInit, OnDestroy {
     if (savedDataStr) {
       try {
         const savedData = JSON.parse(savedDataStr);
-        console.log('📂 Loaded from localStorage:', savedData);
-        console.log('🔍 Project Name Type:', typeof savedData.projectName, 'Value:', savedData.projectName);
         
         // check if fileBase64 is already present (from history)
         if (savedData.fileBase64) {
-      this.projectName = savedData.projectName?.toString().trim() || '';
-   this.fileName = savedData.fileName?.toString().trim() || '';
-   
-      if (!this.projectName) {
-      this.errorMessage = 'Project name is empty or invalid. Please re-upload the file.';
-     this.isLoading = false;
-          return;
+          this.projectName = savedData.projectName?.toString().trim() || '';
+          this.fileName = savedData.fileName?.toString().trim() || '';
+          
+          if (!this.projectName) {
+            this.errorMessage = 'Project name is empty or invalid. Please re-upload the file.';
+            this.isLoading = false;
+            return;
           }
-      
-        this.done = true;
+          
+          this.done = true;
           this.isLoading = true;
-      this.message = 'Loading file data...';
+          this.message = 'Loading file data...';
 
-   // process the base64 data directly
+          // process the base64 data directly
           this.processBase64ToCsv(savedData.fileBase64);
-     this.message = 'File loaded successfully!';
+          this.message = 'File loaded successfully!';
           this.isLoading = false;
-   } else {
+        } else {
           // no base64, start polling
- this.startPolling();
-    }
+          this.startPolling();
+        }
       } catch (e) {
-        console.error('Error parsing localStorage data:', e);
         this.startPolling();
       }
     } else {
@@ -101,7 +100,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
     const savedDataStr = localStorage.getItem('lastFileOutput');
 
     if (!savedDataStr) {
-    this.errorMessage = 'No file data found. Please upload a file first.';
+      this.errorMessage = 'No file data found. Please upload a file first.';
       this.isLoading = false;
       return;
     }
@@ -120,12 +119,10 @@ export class FileResultComponent implements OnInit, OnDestroy {
     // Ensure projectName & fileName are strings and trimmed
     projectName = projectName?.toString().trim() || '';
     fileName = fileName?.toString().trim() || '';
-    
-    console.log('🔍 After trim - projectName:', projectName, 'fileName:', fileName);
 
     // التحقق من وجود ProjectName
     if (!projectName || projectName === '') {
-    this.errorMessage = 'Project name is invalid or missing. Please upload a file again.';
+      this.errorMessage = 'Project name is invalid or missing. Please upload a file again.';
       this.isLoading = false;
       return;
     }
@@ -139,53 +136,46 @@ export class FileResultComponent implements OnInit, OnDestroy {
     this.projectName = projectName;
     this.fileName = fileName;
 
-    console.log('Starting polling with:', { userId, projectName, fileName });
     this.message = 'Waiting for file processing...';
 
     // بدء الـ Polling: كل 3 ثوان نسأل الـ API
     this.pollingSubscription = interval(this.pollingInterval)
-   .pipe(
+      .pipe(
         takeWhile(() => (Date.now() - this.startTime) < this.maxPollingTime),
         switchMap(() => {
-   console.log('📡 Polling API with:', { userId, projectName, fileName });
           return this.uploadService.checkOutputStatus(userId, projectName, fileName);
         })
       )
-  .subscribe({
+      .subscribe({
         next: (response) => {
-          console.log('Polling response:', response);
-
-    if (response.status === 'Ready') {
-        this.done = true;
+          if (response.status === 'Ready') {
+            this.done = true;
             this.isLoading = false;
-    this.pollingSubscription?.unsubscribe();
-   this.fetchOutputFile(userId, projectName, fileName);
+            this.pollingSubscription?.unsubscribe();
+            this.fetchOutputFile(userId, projectName, fileName);
           }
-  else if (response.status === 'Processing') {
+          else if (response.status === 'Processing') {
             this.message = 'File is still processing, please wait...';
           }
-    else if (response.status === 'NotFound') {
-  this.pollingSubscription?.unsubscribe();
-       this.errorMessage = 'File record not found. This usually means the file has not been processed yet. Please wait a few moments and refresh the page.';
-     this.isLoading = false;
+          else if (response.status === 'NotFound') {
+            this.pollingSubscription?.unsubscribe();
+            this.errorMessage = 'File record not found. This usually means the file has not been processed yet. Please wait a few moments and refresh the page.';
+            this.isLoading = false;
           }
         },
         error: (err) => {
-          console.error('Polling error:', err);
-console.error('Error URL:', err.url);
-          console.error('Error Status:', err.status);
           this.pollingSubscription?.unsubscribe();
       
           if (err.status === 0 || err.status === 408) {
             this.errorMessage = 'Connection timeout. The file is taking longer to process. Please refresh the page and try again.';
           } else {
-  this.errorMessage = 'Error checking file status: ' + (err?.error?.message || err?.message || 'Unknown error');
- }
-  this.isLoading = false;
-  },
-     complete: () => {
+            this.errorMessage = 'Error checking file status: ' + (err?.error?.message || err?.message || 'Unknown error');
+          }
+          this.isLoading = false;
+        },
+        complete: () => {
           if (this.isLoading) {
-  this.errorMessage = 'File processing timeout. The server is taking too long to respond. Please try again later.';
+            this.errorMessage = 'File processing timeout. The server is taking too long to respond. Please try again later.';
             this.isLoading = false;
           }
         }
@@ -197,26 +187,22 @@ console.error('Error URL:', err.url);
     this.message = 'Loading file data...';
     this.errorMessage = '';
 
-  this.uploadService.getOutputFileBase64(userId, projectName, fileName)
+    this.uploadService.getOutputFileBase64(userId, projectName, fileName)
       .subscribe({
-  next: (res: any) => {
-          console.log("BASE64 RESPONSE:", res);
-
+        next: (res: any) => {
           if (res?.fileBase64 || res?.FileBase64) {
-   const base64 = res.fileBase64 ?? res.FileBase64;
-
-  this.processBase64ToCsv(base64);
-     this.message = 'File loaded successfully!';
+            const base64 = res.fileBase64 ?? res.FileBase64;
+            this.processBase64ToCsv(base64);
+            this.message = 'File loaded successfully!';
             this.done = true;
-       } else {
+          } else {
             this.errorMessage = 'No file data found in server response.';
           }
 
-       this.isLoading = false;
-  },
-      error: (err) => {
-          console.error('Error fetching file:', err);
-        this.errorMessage = 'Error fetching file from server.';
+          this.isLoading = false;
+        },
+        error: (err) => {
+          this.errorMessage = 'Error fetching file from server.';
           this.isLoading = false;
         }
       });
@@ -225,33 +211,31 @@ console.error('Error URL:', err.url);
   private processBase64ToCsv(base64String: string) {
     try {
       const decoded = atob(base64String);
-  const bytes = new Uint8Array(decoded.length);
+      const bytes = new Uint8Array(decoded.length);
 
       for (let i = 0; i < decoded.length; i++) {
-      bytes[i] = decoded.charCodeAt(i);
-    }
+        bytes[i] = decoded.charCodeAt(i);
+      }
 
-    const csvText = new TextDecoder("utf-8").decode(bytes);
-
+      const csvText = new TextDecoder("utf-8").decode(bytes);
       const lines = csvText.trim().split('\n');
 
       this.csvHeaders = lines[0].split(',').map(h => h.trim());
 
       this.csvData = lines.slice(1).map(line => {
         const values = line.split(',').map(v => v.trim());
-   const row: any = {};
-    this.csvHeaders.forEach((header, i) => {
-      row[header] = values[i] ?? '';
-});
+        const row: any = {};
+        this.csvHeaders.forEach((header, i) => {
+          row[header] = values[i] ?? '';
+        });
         return row;
       });
 
- // Ensure last column exists; compute totals and append grand total row
+      // Ensure last column exists; compute totals and append grand total row
       this.recalculateAllTotals();
       this.appendGrandTotalRow();
 
     } catch (e) {
-      console.error("CSV decode error:", e);
       this.errorMessage = "Error decoding CSV file.";
     }
   }
@@ -259,12 +243,12 @@ console.error('Error URL:', err.url);
   private recalculateRowTotal(row: any) {
     if (!this.csvHeaders || this.csvHeaders.length < 4) return;
 
- const colIndex2 = 1; // second column
+    const colIndex2 = 1; // second column
     const colIndex4 = 3; // fourth column
-  const totalIndex = this.csvHeaders.length - 1; // last column
+    const totalIndex = this.csvHeaders.length - 1; // last column
 
     const h2 = this.csvHeaders[colIndex2];
-  const h4 = this.csvHeaders[colIndex4];
+    const h4 = this.csvHeaders[colIndex4];
     const hTotal = this.csvHeaders[totalIndex];
 
     const v2 = parseFloat(String(row[h2]).replace(',', '.')) || 0;
@@ -287,13 +271,13 @@ console.error('Error URL:', err.url);
     // remove existing grand total row if present
     this.csvData = this.csvData.filter(r => !r.__isTotalRow);
 
- const totalIndex = this.csvHeaders.length - 1;
+    const totalIndex = this.csvHeaders.length - 1;
     const hTotal = this.csvHeaders[totalIndex];
 
     let grand = 0;
     this.csvData.forEach(r => {
       const v = parseFloat(String(r[hTotal]).replace(',', '.')) || 0;
-  grand += v;
+      grand += v;
     });
 
     const totalRow: any = {};
@@ -307,14 +291,14 @@ console.error('Error URL:', err.url);
   }
 
   enterEditMode() {
- // permission: only manager can edit
+    // permission: only manager can edit
     const savedDataStr = localStorage.getItem('lastFileOutput');
     if (!savedDataStr) return alert('No file info available');
     const savedData = JSON.parse(savedDataStr);
     const managerId = savedData.userId;
 
     if (!this.currentUserId || Number(this.currentUserId) !== Number(managerId)) {
-  alert("You don't have permission to edit this file.");
+      alert("You don't have permission to edit this file.");
       return;
     }
 
@@ -323,7 +307,7 @@ console.error('Error URL:', err.url);
     this.editing = true;
   }
 
-onCellChange(rowIdx: number, header: string, value: any) {
+  onCellChange(rowIdx: number, header: string, value: any) {
     if (!this.editing) return;
     const row = this.csvData[rowIdx];
     if (!row || row.__isTotalRow) return;
@@ -367,44 +351,44 @@ onCellChange(rowIdx: number, header: string, value: any) {
     const projectName = this.projectName.trim();
     const fileName = this.fileName.trim();
 
-    console.log('💾 Saving edit with:', { 
-      userId,
-      managerId,
-      projectName,
-      fileName,
-      csvSize: csvText.length
-    });
+    // Set loading state to prevent further edits
+    this.isSaving = true;
 
-  // تحويل CSV لـ Base64
+    // Step 1: تحويل CSV لـ Base64 و حفظ في cache
     const reader = new FileReader();
     reader.onload = () => {
       const base64String = (reader.result as string).split(',')[1]; // extract base64 part
 
-      console.log('📝 CSV to Base64:', {
-        base64Length: base64String?.length,
-        first100chars: base64String?.substring(0, 100)
-      });
+      // Step 2: حفظ البيانات الجديدة في localStorage (cache)
+      const updatedCacheData = {
+        userId: userId,
+        projectName: projectName,
+        fileName: fileName,
+        fileBase64: base64String
+      };
 
-   // استخدام الـ API الجديد: /api/history/output
+      localStorage.setItem('lastFileOutput', JSON.stringify(updatedCacheData));
+
+      // Step 3: إرسال لـ API
       this.uploadService.saveOutputFile(userId, managerId, projectName, fileName, base64String)
-     .subscribe({
+        .subscribe({
           next: (res) => {
-        console.log('✅ Save successful:', res);
-            alert('Changes saved successfully');
-     this.editing = false;
-            // refresh display by fetching output again
-    this.fetchOutputFile(managerId, projectName, fileName);
+            alert('Changes saved successfully! ✅');
+            this.isSaving = false;
+            this.editing = false;
+            
+            // Refresh the current page
+            location.reload();
           },
-     error: (err) => {
-          console.error('❌ Save error:', err);
-      console.error('Error response:', err.error);
+          error: (err) => {
+            this.isSaving = false;
             alert(`Failed to save changes: ${err.error?.message || err.message || 'Unknown error'}`);
           }
-     });
+        });
     };
 
     reader.onerror = () => {
-console.error('❌ Error converting CSV to Base64');
+      this.isSaving = false;
       alert('Error processing file. Please try again.');
     };
 
@@ -417,10 +401,10 @@ console.error('❌ Error converting CSV to Base64');
 
   goHome() {
     this.router.navigate(['/']);
-}
+  }
 
   getStatus(): 'loading' | 'done' | 'error' {
-  if (this.errorMessage) return 'error';
+    if (this.errorMessage) return 'error';
     if (!this.done) return 'loading';
     return 'done';
   }
@@ -430,14 +414,23 @@ console.error('❌ Error converting CSV to Base64');
     if (!savedDataStr) return;
 
     const savedData = JSON.parse(savedDataStr);
-  this.uploadService.downloadOutputFile(savedData.userId, savedData.projectName, savedData.fileName)
-      .subscribe(blob => {
-const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${savedData.fileName}_output.csv`;
-  a.click();
-        window.URL.revokeObjectURL(url);
+    this.isDownloading = true;
+
+    this.uploadService.downloadOutputFile(savedData.userId, savedData.projectName, savedData.fileName)
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${savedData.fileName}_output.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+          this.isDownloading = false;
+        },
+        error: (err) => {
+          this.isDownloading = false;
+          alert('Failed to download output file');
+        }
       });
   }
 
@@ -446,20 +439,22 @@ const url = window.URL.createObjectURL(blob);
     if (!savedDataStr) return;
 
     const savedData = JSON.parse(savedDataStr);
+    this.isDownloading = true;
 
     this.uploadService.downloadAllFiles(savedData.userId, savedData.projectName, savedData.fileName)
       .subscribe({
         next: (blob: Blob) => {
           const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+          const a = document.createElement('a');
           a.href = url;
           a.download = `${savedData.fileName}_all_files.zip`;
           a.click();
-      window.URL.revokeObjectURL(url);
-    },
+          window.URL.revokeObjectURL(url);
+          this.isDownloading = false;
+        },
         error: (err) => {
-          console.error('Download all files error:', err);
-    alert('Failed to download Input & Output files.');
+          this.isDownloading = false;
+          alert('Failed to download Input & Output files.');
         }
       });
   }

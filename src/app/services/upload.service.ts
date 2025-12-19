@@ -133,30 +133,36 @@ export class UploadService {
   }
 
   // ============================================
-  // ✅ NEW: حفظ ملف الإخراج المعدّل
+  // ✅ Save edited output file to API
   // ============================================
   saveOutputFile(userId: number, managerId: number, projectName: string, fileName: string, fileBase64: string): Observable<any> {
-    const params = new URLSearchParams({
-    userId: userId.toString(),
-      managerId: managerId.toString(),
-      projectName: projectName.trim(),
-      fileName: fileName.trim()
-    });
+    // تحويل Base64 لـ Blob
+    const byteCharacters = atob(fileBase64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'text/csv' });
 
-    const payload = {
-      fileBase64: fileBase64
-    };
+    // إنشاء FormData
+    const formData = new FormData();
+    formData.append('userId', userId.toString());
+    formData.append('projectName', projectName.trim());
+    formData.append('fileName', fileName.trim());
+    formData.append('outputFile', blob, fileName);
 
-    console.log('💾 Sending save request to API:', {
-      url: `${this.API_BASE_URL}/output?${params.toString()}`,
-      params: { userId, managerId, projectName, fileName },
-   fileBase64Length: fileBase64?.length || 0
+    console.log('💾 Sending save request to API /history/output:', {
+      url: `${this.API_BASE_URL}/output`,
+      params: { userId, projectName, fileName },
+      blob: blob.type,
+      blobSize: blob.size
     });
 
     return this.http.post(
-      `${this.API_BASE_URL}/output?${params.toString()}`,
-  payload
-  );
+      `${this.API_BASE_URL}/output`,
+      formData
+    );
   }
 
 

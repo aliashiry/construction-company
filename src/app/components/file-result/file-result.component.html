@@ -23,20 +23,26 @@
         <span class="info-item"><strong>File:</strong> {{ fileName }}</span>
       </div>
       <div class="file-actions">
-        <button *ngIf="!editing" (click)="downloadOutputFile()" class="btn btn-primary">
-          <span class="btn-icon">📥</span> Download Output
+        <button *ngIf="!editing" (click)="downloadOutputFile()" class="btn btn-primary" [disabled]="isDownloading">
+          <span class="btn-icon" *ngIf="!isDownloading">📥</span>
+          <span class="btn-icon" *ngIf="isDownloading">⏳</span>
+          {{ isDownloading ? 'Downloading...' : 'Download Output' }}
         </button>
-        <button *ngIf="!editing" (click)="downloadAllFiles()" class="btn btn-secondary">
-          <span class="btn-icon">📦</span> Download All
+        <button *ngIf="!editing" (click)="downloadAllFiles()" class="btn btn-secondary" [disabled]="isDownloading">
+          <span class="btn-icon" *ngIf="!isDownloading">📦</span>
+          <span class="btn-icon" *ngIf="isDownloading">⏳</span>
+          {{ isDownloading ? 'Downloading...' : 'Download All' }}
         </button>
-        <button *ngIf="!editing" (click)="enterEditMode()" class="btn btn-secondary">
+        <button *ngIf="!editing" (click)="enterEditMode()" class="btn btn-secondary" [disabled]="isSaving">
           <span class="btn-icon">✏️</span> Edit
         </button>
 
-        <button *ngIf="editing" (click)="saveEdit()" class="btn btn-primary">
-          <span class="btn-icon">💾</span> Save
+        <button *ngIf="editing" (click)="saveEdit()" class="btn btn-primary" [disabled]="isSaving">
+          <span class="btn-icon" *ngIf="!isSaving">💾</span>
+          <span class="btn-icon" *ngIf="isSaving">⏳</span>
+          {{ isSaving ? 'Saving...' : 'Save' }}
         </button>
-        <button *ngIf="editing" (click)="cancelEdit()" class="btn btn-secondary">
+        <button *ngIf="editing" (click)="cancelEdit()" class="btn btn-secondary" [disabled]="isSaving">
           <span class="btn-icon">↩️</span> Cancel
         </button>
 
@@ -54,10 +60,10 @@
         <tbody>
           <tr *ngFor="let row of csvData; let i = index" [class.total-row]="row.__isTotalRow">
             <td *ngFor="let header of csvHeaders; let j = index">
-              <ng-container *ngIf="editing && !row.__isTotalRow && j !== csvHeaders.length -1">
+              <ng-container *ngIf="editing && !row.__isTotalRow && j !== csvHeaders.length -1 && !isSaving">
                 <input [(ngModel)]="csvData[i][header]" (ngModelChange)="onCellChange(i, header, $event)" />
               </ng-container>
-              <ng-container *ngIf="!editing || row.__isTotalRow || j === csvHeaders.length -1">
+              <ng-container *ngIf="!editing || row.__isTotalRow || j === csvHeaders.length -1 || isSaving">
                 {{ row[header] }}
               </ng-container>
             </td>
