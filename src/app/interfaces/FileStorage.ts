@@ -4,6 +4,8 @@ export interface FileStorage {
   FileName: string;
   InputFileData: File | null;
   Notes: string;
+  managerID?: number;
+  managerName?: string;
   dateCreate?: string;
 }
 // export interface FileDataFromAPI {
@@ -80,6 +82,7 @@ export interface Project {
  * File data returned from API
  */
 export interface FileDataFromAPI {
+  managerName: string;
   managerID: number;
   projectName: string;
   fileName: string;

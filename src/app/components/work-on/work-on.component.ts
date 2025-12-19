@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { WorkOnService } from './../../services/work-on.service';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, catchError, map } from 'rxjs/operators';
+import { WorkOnService } from '../../services/work-on.service';
 import { UploadService } from '../../services/upload.service';
-import { FileDataFromAPI, FileStorage } from '../../interfaces/FileStorage';
+import { FileDataFromAPI, FileStorage, FullFileDataResponse } from '../../interfaces/FileStorage';
 import { ProjectData } from '../../interfaces/FileStorage';
 import { AddWorkerRequest } from '../../interfaces/FileStorage';
 import { WorkerData } from '../../interfaces/FileStorage';
@@ -43,7 +43,7 @@ export class WorkOnComponent implements OnInit, OnDestroy {
    * Active tab selection
    * Used in HTML: [class.active]="activeTab === 'projects'"
    */
-  activeTab: 'projects' | 'files' | 'workers' = 'projects';
+  activeTab: 'my-files' | 'projects' | 'workers' = 'my-files';
 
   /**
    * Projects data array (grouped by ProjectName)
@@ -57,6 +57,23 @@ export class WorkOnComponent implements OnInit, OnDestroy {
    */
   files: FileDataFromAPI[] = [];
 
+  /**
+   * Assigned files data array (files assigned to worker from API/workon)
+   * Used in HTML: *ngFor="let assignedFile of assignedFiles"
+   */
+  assignedFiles: any[] = [];
+
+  /**
+   * Project files with counts for My Files tab
+   * Used in HTML: *ngFor="let projectFile of projectFilesWithCounts"
+   */
+  projectFilesWithCounts: any[] = [];
+
+  /**
+   * Currently selected project name (when viewing project details)
+   * Used to filter files shown in "My Files" tab
+   */
+  selectedProjectName: string | null = null;
   /**
    * Workers data array
    * Used in HTML: *ngFor="let worker of workers"
@@ -112,7 +129,7 @@ export class WorkOnComponent implements OnInit, OnDestroy {
     private router: Router,
     private workOnService: WorkOnService,
     private uploadService: UploadService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Get current user from localStorage
@@ -146,38 +163,206 @@ export class WorkOnComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
 
-    // Load files and group them by project
-    this.workOnService.getFullFileData(this.currentUserID)
+    // Load assigned files from work-on API ONLY
+    this.workOnService.getWorkerAssignedFiles(this.currentUserID)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          this.files = response.fullFileData || [];
-          this.totalFilesCount = this.files.length;
-          
-          // Group files by ProjectName to create projects list
-          this.groupFilesByProject();
-          
-          // Load workers for all projects
-          this.loadAllWorkers();
-          
+        next: (assignedFiles) => {
+          // Transform assigned files
+          this.assignedFiles = assignedFiles.map(f => ({
+            managerID: f.managerID || null,
+            managerName: f.managerName,
+            projectName: f.projectName,
+            fileName: f.fileName,
+            assignedDate: f.dateCreate || f.dateCreate,
+            notes: f.notes
+          }));
+
+          // Calculate stats from work-on data only
+          this.totalFilesCount = this.assignedFiles.length;
+
+          // Count unique projects from assigned files
+          const uniqueProjects = new Set(this.assignedFiles.map(f => f.projectName));
+          this.projectsCount = uniqueProjects.size;
+
+          // Build projects list with manager info
+          this.projects = Array.from(uniqueProjects).map(projName => {
+            const firstFile = this.assignedFiles.find(f => f.projectName === projName);
+            return {
+              projectName: projName,
+              filesCount: this.assignedFiles.filter(f => f.projectName === projName).length,
+              uploadDate: firstFile?.assignedDate || new Date().toISOString(),
+              managerID: firstFile?.managerID || null,
+              notes: ''
+            };
+          });
+
+          // Fetch manager names per project
+          this.projects.forEach(proj => {
+            this.workOnService.getProjectManagers(proj.projectName, this.currentUserID)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (managers) => {
+                  if (managers && managers.length > 0) {
+                    (proj as any).managerName = managers[0].managerName || '';
+                  }
+                },
+                error: () => {
+                  (proj as any).managerName = '';
+                }
+              });
+          });
+
+          // Count unique assigned managers (workers count = number of different managers)
+          const uniqueManagers = new Set(this.assignedFiles.map(f => f.managerID).filter(id => id));
+          this.workersCount = uniqueManagers.size;
+
+          console.log('📊 Projects loaded:', this.projects);
+          console.log('📂 Assigned files:', this.assignedFiles);
+
+          // Load files count for each project using getFilesCountByProject
+          this.loadProjectFilesCounts();
+
           this.loading = false;
         },
         error: (err) => {
-          console.error('Error loading files:', err);
+          console.error('Error loading assigned files:', err);
           this.error = 'Failed to load your work data';
           this.loading = false;
         }
       });
+  }
 
-    // Load files count
-    this.workOnService.getFilesCount(this.currentUserID)
+  /**
+ * Load actual files for each project
+ */
+  // private loadProjectFilesCounts() {
+  //   this.projectFilesWithCounts = [];
+
+  //   console.log('🔍 Loading files for projects:', this.projects);
+  //   console.log('🔍 Assigned files:', this.assignedFiles);
+
+  //   // Use the already loaded assignedFiles and just display them
+  //   this.projectFilesWithCounts = this.assignedFiles.map(file => ({
+  //     projectName: file.projectName,
+  //     managerName: file.managerName,
+  //     fileName: file.fileName,
+  //     managerID: file.managerID,
+  //     dateCreate: file.assignedDate,
+  //     notes: file.notes
+  //   })).sort((a, b) => a.projectName.localeCompare(b.projectName));
+
+  //   console.log('✅ Project files loaded:', this.projectFilesWithCounts);
+  // }
+
+
+  
+  /**
+ * Load actual files for each project and create projectFilesWithCounts array
+ */
+/**
+ * Load actual files for each project and create projectFilesWithCounts array
+ */
+/**
+ * Load actual files for each project and create projectFilesWithCounts array
+ */
+/**
+ * Load actual files for each project and create projectFilesWithCounts array
+ */
+
+/**
+ * Load actual files for each project and create projectFilesWithCounts array
+ */
+
+/**
+ * Load actual files for each project and create projectFilesWithCounts array
+ */
+private loadProjectFilesCounts() {
+  this.projectFilesWithCounts = [];
+  console.log('🔍 Assigned files:', this.assignedFiles);
+  console.log('🔍 Projects:', this.projects);
+  // نجمع الـ projects الفريدة من assignedFiles مع الـ managerID
+  const projectsMap = new Map<string, number>();
+ 
+  this.assignedFiles.forEach(file => {
+    if (file.projectName) {
+      const managerID = file.managerID || 1; // Use 1 as default if managerID is null
+      projectsMap.set(file.projectName, managerID);
+    }
+  });
+  console.log('🔍 Projects map with managerID:', Array.from(projectsMap.entries()));
+  if (projectsMap.size === 0) {
+    console.warn('⚠️ No projects with managerID found in assignedFiles');
+    return;
+  }
+  // نعمل API calls لكل مشروع
+  const fileObservables = Array.from(projectsMap.entries()).map(([projectName, managerID]) => {
+    console.log(`📡 Calling API for project: "${projectName}" with managerID: ${managerID}`);
+   
+    return this.uploadService.getFullFileData2(managerID, projectName)
+      .pipe(
+        map(response => response as unknown as any[]),
+        catchError(err => {
+          console.error(`❌ Error loading files for ${projectName}:`, err);
+          return of([]);
+        }),
+        map(files => {
+          console.log(`✅ API Response for ${projectName}:`, files);
+          console.log(`📂 Files count: ${files.length}`);
+         
+          const managerName = this.assignedFiles.find(f => f.projectName === projectName)?.managerName || 'Unknown Manager';
+         
+          return files.map((file: any) => ({
+            projectName: projectName,
+            managerName: managerName,
+            fileName: file.fileName || '',
+            managerID: managerID,
+            dateCreate: file.dateCreate,
+            notes: file.notes
+          }));
+        })
+      );
+  });
+  forkJoin(fileObservables)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (results) => {
+        this.projectFilesWithCounts = results.flat().sort((a, b) =>
+          a.projectName.localeCompare(b.projectName)
+        );
+        console.log('✅✅✅ FINAL projectFilesWithCounts:', this.projectFilesWithCounts);
+      },
+      error: (err) => {
+        console.error('❌ Error in forkJoin:', err);
+      }
+    });
+}
+
+
+  /**
+   * Load assigned files for this worker from API/workon
+   */
+  private loadAssignedFiles() {
+    this.workOnService.getWorkerAssignedFiles(this.currentUserID)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (count) => {
-          this.totalFilesCount = count;
+        next: (assignedFiles) => {
+          // Transform the response to include manager name and project name
+          this.assignedFiles = assignedFiles.map(file => ({
+            managerID: file.managerID || file.managerID || null,
+            managerName: file.managerName || (file.email ? file.email.split('@')[0] : 'Manager'),
+            projectName: file.projectName,
+            fileName: file.fileName,
+            assignedDate: file.dateCreate,
+            notes: file.notes
+          }));
+
+          // update overall files count in case assigned list is authoritative
+          this.totalFilesCount = this.files.length;
         },
         error: (err) => {
-          console.error('Error loading files count:', err);
+          console.error('Error loading assigned files:', err);
+          this.assignedFiles = [];
         }
       });
   }
@@ -187,7 +372,7 @@ export class WorkOnComponent implements OnInit, OnDestroy {
    */
   private loadAllWorkers() {
     this.workers = [];
-    
+
     // Load workers for each project
     this.projects.forEach(project => {
       this.workOnService.getWorkers(this.currentUserID, project.projectName)
@@ -200,7 +385,9 @@ export class WorkOnComponent implements OnInit, OnDestroy {
               projectName: project.projectName
             }));
             this.workers = [...this.workers, ...projectWorkers];
-            this.workersCount = this.workers.length;
+            // Count unique workers assigned by this manager (by userId or email)
+            const uniqueKeys = new Set(this.workers.map(w => w.userId ?? w.email ?? w.userName));
+            this.workersCount = uniqueKeys.size;
           },
           error: (err) => {
             console.error(`Error loading workers for ${project.projectName}:`, err);
@@ -217,11 +404,13 @@ export class WorkOnComponent implements OnInit, OnDestroy {
 
     this.files.forEach(file => {
       if (!projectsMap.has(file.projectName)) {
+        // Try to detect manager id from file if available
+        const mgrId = (file as any).managerID || (file as any).managerId || null;
         projectsMap.set(file.projectName, {
           projectName: file.projectName,
           filesCount: 0,
           uploadDate: file.dateCreate || new Date().toISOString(),
-          managerID: this.currentUserID,
+          managerID: mgrId,
           notes: file.notes
         });
       }
@@ -237,6 +426,24 @@ export class WorkOnComponent implements OnInit, OnDestroy {
 
     this.projects = Array.from(projectsMap.values());
     this.projectsCount = this.projects.length;
+
+    // Try to fetch manager name for each project to display in Projects tab
+    this.projects.forEach(project => {
+      this.workOnService.getProjectManagers(project.projectName, this.currentUserID)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (managers) => {
+            if (managers && managers.length > 0) {
+              (project as any).managerName = managers[0].managerName || managers[0].managerName || '';
+            } else {
+              (project as any).managerName = '';
+            }
+          },
+          error: () => {
+            (project as any).managerName = '';
+          }
+        });
+    });
   }
 
   /**
@@ -261,7 +468,7 @@ export class WorkOnComponent implements OnInit, OnDestroy {
    */
   formatDate(dateString: string): string {
     if (!dateString) return 'Unknown';
-    
+
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -273,11 +480,11 @@ export class WorkOnComponent implements OnInit, OnDestroy {
     if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
     });
   }
 
@@ -310,8 +517,19 @@ export class WorkOnComponent implements OnInit, OnDestroy {
    */
   viewProjectDetails(project: ProjectData) {
     this.openMenuId = null;
-    // Switch to files tab and filter by project
-    this.activeTab = 'files';
+    // Switch to My Files tab and show all files for this project (one row per file)
+    this.selectedProjectName = project.projectName;
+    this.activeTab = 'my-files';
+
+    const projectFiles = this.getProjectFiles(project.projectName);
+    this.assignedFiles = projectFiles.map(f => ({
+      managerID: (f as any).managerID || (f as any).managerId || (project as any).managerID || null,
+      managerName: (f as any).managerName || (project as any).managerName || this.currentUserName,
+      projectName: f.projectName,
+      fileName: f.fileName,
+      assignedDate: f.dateCreate,
+      notes: f.notes
+    }));
   }
 
   /**
@@ -347,30 +565,11 @@ export class WorkOnComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.openMenuId = null;
-    
-    // Get all files for this project
     const projectFiles = this.files.filter(f => f.projectName === projectName);
-    
-    // Delete all files in the project
-    projectFiles.forEach(file => {
-      this.workOnService.deleteFile(this.currentUserID, projectName, file.fileName)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            console.log(`Deleted file: ${file.fileName}`);
-          },
-          error: (err) => {
-            console.error(`Error deleting file ${file.fileName}:`, err);
-          }
-        });
-    });
-
-    // Update UI
     this.files = this.files.filter(f => f.projectName !== projectName);
     this.projects = this.projects.filter(p => p.projectName !== projectName);
-    this.projectsCount--;
-    this.totalFilesCount -= projectFiles.length;
+    this.projectsCount = Math.max(0, this.projectsCount - 1);
+    this.totalFilesCount = Math.max(0, this.totalFilesCount - projectFiles.length);
   }
 
   /**
@@ -379,40 +578,40 @@ export class WorkOnComponent implements OnInit, OnDestroy {
    * Used in HTML: (click)="downloadFile(file)"
    */
   downloadFile(file: FileDataFromAPI) {
-    console.log('📥 Downloading output file:', { 
-      userId: this.currentUserID, 
- projectName: file.projectName, 
-      fileName: file.fileName 
+    console.log('📥 Downloading output file:', {
+      userId: this.currentUserID,
+      projectName: file.projectName,
+      fileName: file.fileName
     });
 
     this.uploadService.downloadOutputFile(this.currentUserID, file.projectName, file.fileName)
       .pipe(takeUntil(this.destroy$))
-   .subscribe({
-     next: (blob: Blob) => {
-   console.log('✅ File downloaded successfully');
-      
+      .subscribe({
+        next: (blob: Blob) => {
+          console.log('✅ File downloaded successfully');
+
           // Extract file name without extension
-const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
-   const downloadFileName = `${fileNameWithoutExt}_output.csv`;
-       
+          const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
+          const downloadFileName = `${fileNameWithoutExt}_output.csv`;
+
           // Create download link
-  const url = window.URL.createObjectURL(blob);
+          const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
           link.download = downloadFileName;
-   
+
           // Trigger download
           document.body.appendChild(link);
-       link.click();
+          link.click();
           document.body.removeChild(link);
-          
-       // Cleanup
+
+          // Cleanup
           window.URL.revokeObjectURL(url);
-          
-    console.log('📥 File saved as:', downloadFileName);
+
+          console.log('📥 File saved as:', downloadFileName);
         },
-    error: (err) => {
-     console.error('❌ Error downloading file:', err);
+        error: (err) => {
+          console.error('❌ Error downloading file:', err);
           alert(`Failed to download file: ${err.error?.message || err.message || 'Unknown error'}`);
         }
       });
@@ -432,7 +631,7 @@ const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
       .subscribe({
         next: () => {
           // Remove file from list
-          this.files = this.files.filter(f => 
+          this.files = this.files.filter(f =>
             !(f.projectName === file.projectName && f.fileName === file.fileName)
           );
           this.totalFilesCount--;
@@ -461,7 +660,7 @@ const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
    */
   getWorkerInitials(userName: string): string {
     if (!userName) return 'W';
-    
+
     const names = userName.trim().split(' ');
     if (names.length >= 2) {
       return (names[0][0] + names[names.length - 1][0]).toUpperCase();
@@ -543,9 +742,9 @@ const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.workers = this.workers.filter(w => 
-              !(w.email === worker.email && 
-                w.managerID === worker.managerID && 
+            this.workers = this.workers.filter(w =>
+              !(w.email === worker.email &&
+                w.managerID === worker.managerID &&
                 w.projectName === worker.projectName)
             );
             this.workersCount--;
@@ -561,9 +760,9 @@ const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.workers = this.workers.filter(w => 
-              !(w.userId === worker.userId && 
-                w.managerID === worker.managerID && 
+            this.workers = this.workers.filter(w =>
+              !(w.userId === worker.userId &&
+                w.managerID === worker.managerID &&
                 w.projectName === worker.projectName)
             );
             this.workersCount--;
@@ -596,5 +795,24 @@ const fileNameWithoutExt = file.fileName.replace(/\.(dxf|DXF|dwg|DWG)$/i, '');
    */
   getProjectByName(projectName: string): ProjectData | undefined {
     return this.projects.find(p => p.projectName === projectName);
+  }
+
+  /**
+   * View file result (open in file-result component)
+   * Used in HTML: (click)="viewFileResult(assignedFile)"
+   */
+  viewFileResult(assignedFile: any) {
+    // Navigate to file-result with file data
+    this.uploadService.setFileStorage({
+      UserID: this.currentUserID,
+      ProjectName: assignedFile.projectName,
+      FileName: assignedFile.fileName,
+      Notes: assignedFile.notes,
+      managerID: assignedFile.managerID,
+      managerName: assignedFile.managerName,
+      InputFileData: null
+    } as FileStorage);
+
+    this.router.navigate(['/file-result']);
   }
 }

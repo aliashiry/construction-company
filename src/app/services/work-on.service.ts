@@ -524,10 +524,7 @@ import { catchError, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FileStorage, Project, WorkerData } from '../interfaces/FileStorage';
-import { FileData, FullFileDataResponse } from '../interfaces/FileStorage';
-import { AddWorkerRequest } from '../interfaces/FileStorage';
-import { FileDataFromAPI } from '../interfaces/FileStorage';
+import { FileStorage, Project, WorkerData, FileData, FullFileDataResponse, AddWorkerRequest, FileDataFromAPI } from '../interfaces/FileStorage';
 import { API } from '../constants/app.constants';
 
 

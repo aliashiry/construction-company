@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { FileStorage, FullFileDataResponse } from '../interfaces/FileStorage';
+import { FileStorage, FileDataFromAPI, FullFileDataResponse } from '../interfaces/FileStorage';
 import { API } from '../constants/app.constants';
 
 @Injectable({ providedIn: 'root' })
@@ -10,7 +10,9 @@ export class UploadService {
   private currentData: FileStorage | null = null;
   private readonly API_BASE_URL = `${API.BASE_URL}/history`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    (window as any).uploadService = this; // For debugging purposes
+  }
 
   setFileStorage(data: FileStorage) {
     this.currentData = data;
@@ -27,7 +29,7 @@ export class UploadService {
   }
 
   // -------------------------------------
-  // ✅ 1) إرسال ملف الإدخال إلى API (/input)
+  // ✅ 1) Send input file to API (/input)
   // -------------------------------------
   submitToInput(fileStorage: FileStorage, forwardUrl?: string): Observable<any> {
     const formData = new FormData();
@@ -48,7 +50,7 @@ export class UploadService {
   }
 
   // -------------------------------------
-  // ✅ 2) التحقق من وجود ملف الإخراج
+  // ✅ 2) Check for output file existence
   // -------------------------------------
   checkOutput(userId: number, projectName: string, fileName: string): Observable<any> {
     const params = new HttpParams()
@@ -60,7 +62,7 @@ export class UploadService {
   }
 
   // -------------------------------------
-  // ✅ 3) جلب ملف الإخراج Base64
+  // ✅ 3) Fetch output file Base64
   // -------------------------------------
   getOutputFile(userId: number, projectName: string, fileName: string): Observable<any> {
     const params = new HttpParams()
@@ -72,7 +74,7 @@ export class UploadService {
   }
 
   // -------------------------------------
-  // ✅ NEW: التحقق من حالة ملف الإخراج
+  // ✅ NEW: Check output file status
   // -------------------------------------
   checkOutputStatus(userId: number, projectName: string, fileName: string): Observable<any> {
     const params = new HttpParams()
@@ -157,6 +159,21 @@ export class UploadService {
   );
   }
 
+
+  // في ملف upload.service.ts
+// أضف هذه الـ method مع الـ methods الموجودة
+
+/**
+ * Get all files for a specific project
+ */
+getFilesByProject(userId: number, projectName: string): Observable<FileDataFromAPI[]> {
+  const params = new HttpParams()
+    .set('userId', userId.toString())
+    .set('projectName', projectName);
+  
+  return this.http.get<FileDataFromAPI[]>(`${this.API_BASE_URL}/files/by-project`, { params });
+}
+
   // ============================================
   // ✅ ALT: حفظ باستخدام FormData (إذا كان الـ API يتوقع ذلك)
   // ============================================
@@ -193,6 +210,14 @@ const formData = new FormData();
       .set('projectName', projectName);
     return this.http.get<FullFileDataResponse>(`${this.API_BASE_URL}/files`, { params });
   }
+
+//   getFullFileData21(userId: number, projectName: string): Observable<any[]> {
+//   const params = new HttpParams()
+//     .set('userId', userId.toString())
+//     .set('projectName', projectName);
+//   return this.http.get<any[]>(`${this.API_BASE_URL}/files`, { params });
+// }
+
 
   // -----------------------------
   // Get all projects for a user
