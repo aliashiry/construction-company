@@ -1,22 +1,35 @@
-<div class="min-h-screen" [style.background-color]="isDarkTheme ? '#0f172a' : '#f8fafc'"
+
+<div class="min-h-screen" [style.background-color]="isDarkTheme ? '#0a0e27' : '#f8fafc'"
   [style.color]="isDarkTheme ? '#ffffff' : '#0f172a'">
 
-  <!-- Navbar -->
   <nav *ngIf="!isStandalonePage" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md shadow-md border-b"
-    [style.background-color]="isDarkTheme ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.9)'">
+    [ngStyle]="{
+      'background-color': isDarkTheme ? 'rgba(10, 14, 39, 0.9)' : 'rgba(255,255,255,0.9)',
+      'border-bottom': isDarkTheme ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'
+    }">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3" *ngIf="!isStandalonePage">
-        <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-navy font-black">LOGO</div>
-        <span class="font-bold text-lg" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">BrandName</span>
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-black"
+          style="background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 0 30px rgba(249, 115, 22, 0.4);">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="font-bold text-xl" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
+          MEP<span style="background: linear-gradient(135deg, #f97316, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.AI</span>
+        </span>
       </a>
 
       <div class="hidden md:flex items-center gap-8">
         <a (click)="setActiveTab('home')" href="/" [class.active-tab]="activeTab === 'home'"
           [style.color]="activeTab === 'home' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Home</a>
-        <a (click)="setActiveTab('services')" href="#services" [class.active-tab]="activeTab === 'services'"
-          [style.color]="activeTab === 'services' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
-          class="hover:opacity-80 font-semibold transition-colors">Services</a>
+        <a (click)="setActiveTab('features')" href="#features" [class.active-tab]="activeTab === 'features'"
+          [style.color]="activeTab === 'features' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
+          class="hover:opacity-80 font-semibold transition-colors">Features</a>
+        <a (click)="setActiveTab('demo')" href="#demo" [class.active-tab]="activeTab === 'demo'"
+          [style.color]="activeTab === 'demo' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
+          class="hover:opacity-80 font-semibold transition-colors">Demo</a>
         <a (click)="setActiveTab('contact')" href="#contact" [class.active-tab]="activeTab === 'contact'"
           [style.color]="activeTab === 'contact' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Contact</a>
@@ -25,16 +38,21 @@
           {{ isDarkTheme ? 'Light Mode' : 'Dark Mode' }}
         </button>
         <a *ngIf="!isLoggedIn" routerLink="/login"
-          class="ml-3 bg-white text-navy px-4 py-2 rounded-full font-bold border border-slate-200 hover:bg-slate-100">Login</a>
+          class="ml-3 text-white font-bold px-6 py-3 rounded-full border-none transition"
+          style="background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4);">
+          Start Free Trial
+        </a>
         <div *ngIf="isLoggedIn" class="ml-3 flex items-center gap-3 cursor-pointer" (click)="navigateToProfile()">
-          <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-white font-bold">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
+            style="background: linear-gradient(135deg, #f97316, #ea580c);">
             {{ getUserInitials() }}
           </div>
           <span class="font-semibold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">{{ currentUser?.name }}</span>
         </div>
       </div>
 
-      <button class="md:hidden p-2 text-navy" (click)="toggleMenu()" aria-label="Toggle menu">
+      <button class="md:hidden p-2" (click)="toggleMenu()" aria-label="Toggle menu"
+        [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -44,279 +62,567 @@
     <div *ngIf="menuOpen" class="md:hidden px-6 pb-4">
       <div class="flex flex-col gap-3">
         <a href="/" (click)="setActiveTab('home'); toggleMenu()"
-          class="block py-3 px-4 rounded text-navy hover:bg-slate-100" [class.bg-orange]="activeTab === 'home'">Home</a>
-        <a routerLink="/services" (click)="setActiveTab('services'); toggleMenu()"
-          class="block py-3 px-4 rounded text-navy hover:bg-slate-100"
-          [class.bg-orange]="activeTab === 'services'">Services</a>
+          class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'home' ? '#f97316' : 'transparent'"
+          [style.color]="activeTab === 'home' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Home</a>
+        <a href="#features" (click)="setActiveTab('features'); toggleMenu()"
+          class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'features' ? '#f97316' : 'transparent'"
+          [style.color]="activeTab === 'features' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Features</a>
+        <a href="#demo" (click)="setActiveTab('demo'); toggleMenu()"
+          class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'demo' ? '#f97316' : 'transparent'"
+          [style.color]="activeTab === 'demo' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Demo</a>
         <a href="#contact" (click)="setActiveTab('contact'); toggleMenu()"
-          class="block py-3 px-4 rounded text-navy hover:bg-slate-100"
-          [class.bg-orange]="activeTab === 'contact'">Contact</a>
+          class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'contact' ? '#f97316' : 'transparent'"
+          [style.color]="activeTab === 'contact' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Contact</a>
         <a *ngIf="!isLoggedIn" routerLink="/login" (click)="toggleMenu()"
-          class="block py-3 px-4 rounded bg-white text-navy border border-slate-200 text-center font-bold hover:bg-slate-100">Login</a>
+          class="block py-3 px-4 rounded text-center font-bold text-white"
+          style="background: linear-gradient(135deg, #f97316, #ea580c);">Start Free Trial</a>
         <a *ngIf="isLoggedIn" routerLink="/profile" (click)="toggleMenu()"
-          class="block py-3 px-4 rounded bg-orange text-white text-center font-bold">{{ currentUser?.name }}</a>
+          class="block py-3 px-4 rounded text-center font-bold text-white"
+          style="background: linear-gradient(135deg, #f97316, #ea580c);">{{ currentUser?.name }}</a>
       </div>
     </div>
   </nav>
 
-  <!-- <div class="pt-20" *ngIf="!isStandalonePage"></div> -->
-
   <ng-container *ngIf="!isStandalonePage">
-    <!-- Hero Section -->
-    <section class="relative w-full flex items-center justify-center overflow-hidden"
-      style="min-height:100vh; padding:0; background-image:url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2400&fit=crop'); background-size:cover; background-position:center; background-attachment:fixed;">
-
-      <!-- Overlay -->
-      <div class="absolute inset-0" style="background-color:rgba(0,0,0,0.5);"></div>
-
-      <!-- Scroll Indicator -->
-      <div class="absolute bottom-4 start-50 translate-middle-x z-40 scroll-indicator">
-        <svg class="w-6 h-6 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
-      </div>
-
-      <!-- Hero Content -->
-      <div class="relative z-30 text-center px-3 max-w-4xl mx-auto">
-        <h1 class="text-5xl sm:text-6xl md:text-7xl font-black leading-tight mb-6 tracking-tight text-white">
-          BUILDING THE FUTURE<br>
-          <span style="color:#f97316;">ONE STRONG FOUNDATION AT A TIME.</span>
-        </h1>
-        <p class="text-lg md:text-xl max-w-2xl mx-auto text-gray-200">
-          Premium construction and engineering excellence for modern infrastructure
-        </p>
-      </div>
-
-    </section>
-    <!-- Our Services Section -->
-    <section id="services" class="py-20 md:py-32 px-6"
-      [style.background]="isDarkTheme ? 'linear-gradient(to bottom, #0f172a, #000)' : 'linear-gradient(to bottom, #f1f5f9, #e2e8f0)'">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16 md:mb-20">
-          <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Our <span
-              style="color: #f97316;">Services</span></h2>
-          <div class="w-20 h-1 mx-auto" style="background-color: #f97316;"></div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <!-- Planning & Design -->
-          <div
-            class="Service-section service-card-animate backdrop-blur rounded-2xl p-8 text-center transition-all duration-500 hover:transform hover:scale-105"
-            [style.background]="isDarkTheme ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.9)'"
-            [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'" style="animation-delay: 0.1s;">
-            <div
-              class="w-16 h-16 bg-orange/20 rounded-full mx-auto mb-6 flex items-center justify-center transition-transform duration-300 hover:rotate-12">
-              <svg class="w-8 h-8" style="color: #f97316;" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 3H3v18h18V9h-6V3zm6 12h-2v2h-2v-2h-2v-2h2v-2h2v2h2v2z" />
+    <section id="home" class="hero-section-mep">
+      <div class="hero-particles-mep"></div>
+      <div class="container mx-auto px-6">
+        <div class="flex flex-wrap items-center" style="min-height: 100vh;">
+          <div class="w-full lg:w-1/2 hero-text-mep">
+            <div class="badge-pill-mep mb-4">
+              <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>
+              AI-Powered Technology
             </div>
-            <h3 class="text-xl font-black mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Planning & Design</h3>
-            <p class="text-sm mb-6" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Innovative architectural and
-              structural designs for modern excellence</p>
-            <button (click)="openForm()"
-              class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
-              Get Started
-            </button>
+            <h1 class="hero-title-mep mb-4">
+              Transform MEP Drawings into
+              <span class="text-gradient-mep d-block">Instant Quantities</span>
+            </h1>
+            <p class="hero-subtitle-mep mb-5">
+              Extract, identify, and quantify MEP elements from DWG/DXF files in seconds. 
+              From 7 days of manual work to instant automated results with 70-80% accuracy.
+            </p>
+            <div class="flex gap-3 flex-wrap mb-5">
+              <button class="btn-glow-mep" (click)="openForm()">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 3l3.057-3L20 12 8.057 24 5 21l9-9z"/>
+                </svg>
+                Get Started Now
+              </button>
+              <button class="btn-outline-glow-mep">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                Watch Demo
+              </button>
+            </div>
+            <div class="hero-stats-mep mt-5">
+              <div class="stat-item-mep">
+                <div class="stat-number-mep">98%</div>
+                <div class="stat-label-mep">Time Saved</div>
+              </div>
+              <div class="stat-divider-mep"></div>
+              <div class="stat-item-mep">
+                <div class="stat-number-mep">80%</div>
+                <div class="stat-label-mep">Accuracy</div>
+              </div>
+              <div class="stat-divider-mep"></div>
+              <div class="stat-item-mep">
+                <div class="stat-number-mep">24/7</div>
+                <div class="stat-label-mep">Available</div>
+              </div>
+            </div>
           </div>
-
-          <!-- Construction Execution -->
-          <div
-            class="Service-section service-card-animate backdrop-blur rounded-2xl p-8 text-center transition-all duration-500 hover:transform hover:scale-105"
-            [style.background]="isDarkTheme ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.9)'"
-            [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'" style="animation-delay: 0.2s;">
-            <div
-              class="w-16 h-16 bg-orange/20 rounded-full mx-auto mb-6 flex items-center justify-center transition-transform duration-300 hover:rotate-12">
-              <svg class="w-8 h-8" style="color: #f97316;" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-              </svg>
+          <div class="w-full lg:w-1/2">
+            <div class="hero-visual-mep">
+              <div class="floating-card-mep">
+                <img src="assets/image1.png" alt="AI-Powered QTO" class="img-fluid rounded-4">
+              </div>
             </div>
-            <h3 class="text-xl font-black mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Construction Execution
-            </h3>
-            <p class="text-sm mb-6" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Complete project execution with
-              highest quality standards</p>
-            <button (click)="openForm()"
-              class="bg-orange hover:bg-orange/90 text-white font-bold px-6 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
-              Get Started
-            </button>
-          </div>
-        </div>
-
-
-      </div>
-    </section>
-
-    <!-- Upload Center Section -->
-    <section
-      style="padding: 5rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;"
-      [ngClass]="isDarkTheme ? 'bg-dark' : 'bg-light'">
-      <!-- Downward Arrow -->
-      <div class="mb-8 animate-bounce">
-        <svg class="w-12 h-12 text-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
-      </div>
-      <!-- Title -->
-      <h2 class="text-4xl md:text-5xl font-black mb-12 text-center" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
-        How to Use <span style="color: #f97316;">Our Service</span>
-      </h2>
-      <app-upload-center [isDarkTheme]="isDarkTheme" (fileSelected)="onFileSelected($event)"></app-upload-center>
-    </section>
-
-
-    <!-- Our Value Proposition Section -->
-    <section class="py-20 md:py-32 px-6" [ngClass]="isDarkTheme ? 'bg-dark-gradient-1' : 'bg-light-gradient-1'">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16 md:mb-20">
-          <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Our Value
-            <span style="color: #f97316;">Proposition</span>
-          </h2>
-          <div class="w-20 h-1 mx-auto" style="background-color: #f97316;"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <!-- AI-Powered Automation -->
-          <div class="flex flex-col items-center">
-            <div class="relative overflow-hidden rounded-2xl mb-6 w-full h-64">
-              <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2400&fit=crop"
-                class="w-full h-full object-cover" alt="AI Technology">
-            </div>
-            <h3 class="text-2xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">AI-Powered
-              Automation</h3>
-            <p class="text-center" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Leveraging cutting-edge AI
-              technology to streamline project planning, cost estimation, and resource optimization for maximum
-              efficiency</p>
-          </div>
-
-          <!-- Smart Building Technology -->
-          <div class="flex flex-col items-center">
-            <div class="relative overflow-hidden rounded-2xl mb-6 w-full h-64">
-              <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2400&fit=crop"
-                class="w-full h-full object-cover" alt="Smart Building">
-            </div>
-            <h3 class="text-2xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Smart Building
-              Integration
-            </h3>
-            <p class="text-center" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Integrating IoT sensors and smart
-              systems for real-time monitoring, energy management, and predictive maintenance</p>
-          </div>
-
-          <!-- Digital Transformation -->
-          <div class="flex flex-col items-center">
-            <div class="relative overflow-hidden rounded-2xl mb-6 w-full h-64">
-              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2400&fit=crop"
-                class="w-full h-full object-cover" alt="Digital Innovation">
-            </div>
-            <h3 class="text-2xl font-black mb-2" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Digital Transformation
-            </h3>
-            <p class="text-center" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Revolutionizing construction
-              workflows with BIM modeling, cloud collaboration, and data-driven decision making</p>
           </div>
         </div>
       </div>
+      <div class="scroll-indicator-mep">
+        <div class="mouse-mep"></div>
+      </div>
     </section>
 
-    <!-- Our Trusted Clients Section -->
-
-
-    <!-- Contact Form Section -->
-    <section id="contact" class="py-20 md:py-32 px-6 relative overflow-hidden">
-      <div class="absolute inset-0" [ngClass]="isDarkTheme ? 'bg-dark-gradient-2' : 'bg-light-gradient-2'"></div>
-      <div class="absolute inset-0 opacity-20">
-        <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2400"
-          class="w-full h-full object-cover" alt="City Skyline">
-      </div>
-      <div class="absolute inset-0"
-        [style.background]="isDarkTheme ? 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent)' : 'linear-gradient(to top, rgba(255,255,255,0.8), rgba(255,255,255,0.6), transparent)'">
-      </div>
-
-      <div class="relative z-10 max-w-3xl mx-auto">
+    <section id="features" class="features-section-mep">
+      <div class="container mx-auto px-6">
         <div class="text-center mb-12">
-          <h2 class="text-4xl md:text-5xl font-black mb-4" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Ready to
-            Start Your <span style="color: #f97316;">Project?</span></h2>
-          <p class="text-lg" [style.color]="isDarkTheme ? '#d1d5db' : '#6b7280'">Let's discuss your construction and
-            engineering needs</p>
+          <div class="badge-pill-mep mb-3 inline-block">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Core Features
+          </div>
+          <h2 class="section-title-mep">
+            Powerful AI-Driven
+            <span class="text-gradient-mep">Capabilities</span>
+          </h2>
+          <p class="section-subtitle-mep">
+            Everything you need to automate your MEP quantity take-off workflow
+          </p>
         </div>
 
-        <form class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <input type="text" placeholder="Your Name"
-            class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition"
-            [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'"
-            [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'"
-            [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
-          <input type="tel" placeholder="Phone Number"
-            class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition"
-            [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'"
-            [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'"
-            [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
-          <input type="text" placeholder="City" class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition"
-            [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'"
-            [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'"
-            [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
-          <input type="text" placeholder="Project Type"
-            class="backdrop-blur rounded-xl px-6 py-4 focus:outline-none transition"
-            [style.background]="isDarkTheme ? 'rgba(15,23,42,0.6)' : 'rgba(255,255,255,0.9)'"
-            [style.border]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'"
-            [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
-          <button type="submit"
-            class="glow-orange sm:col-span-2 bg-orange hover:bg-orange/90 text-white font-black text-xl px-12 py-6 rounded-full shadow-2xl transition transform hover:scale-105 duration-300">
-            SEND REQUEST
-          </button>
-        </form>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="feature-box-mep">
+            <div class="feature-icon-wrapper-mep">
+              <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+              </svg>
+            </div>
+            <h4>Multimodal AI</h4>
+            <p>Advanced vision-language model trained on MEP drawings</p>
+          </div>
+
+          <div class="feature-box-mep">
+            <div class="feature-icon-wrapper-mep">
+              <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <h4>Instant Processing</h4>
+            <p>Transform 7 days work into seconds with AI automation</p>
+          </div>
+
+          <div class="feature-box-mep">
+            <div class="feature-icon-wrapper-mep">
+              <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+              </svg>
+            </div>
+            <h4>Smart Analysis</h4>
+            <p>Automatic detection of pipes, ducts, cables & fixtures</p>
+          </div>
+
+          <div class="feature-box-mep">
+            <div class="feature-icon-wrapper-mep">
+              <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+              </svg>
+            </div>
+            <h4>Excel Reports</h4>
+            <p>Detailed categorized reports ready for immediate use</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Footer (customizable placeholders) -->
-    <footer *ngIf="!isStandalonePage" class="py-12" [ngClass]="isDarkTheme ? 'bg-dark-semi' : 'bg-light-footer'"
-      [style.border-top]="isDarkTheme ? '1px solid #334155' : '1px solid #e2e8f0'">
-      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div *ngIf="!isStandalonePage">
-          <a href="#" class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-full bg-orange flex items-center justify-center text-navy font-black">LOGO
-            </div>
-            <span class="font-bold text-lg" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">BrandName</span>
-          </a>
-          <p [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Placeholder company description. Replace with your
-            content to describe the company briefly.</p>
+    <section id="demo" class="demo-section-mep">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+          <div class="badge-pill-mep mb-3 inline-block">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+            </svg>
+            See It In Action
+          </div>
+          <h2 class="section-title-mep">
+            From Drawing to
+            <span class="text-gradient-mep">Quantities</span>
+          </h2>
         </div>
 
-        <div class="flex justify-between">
+        <div class="demo-container-mep">
+          <div class="flex flex-wrap items-center gap-8">
+            <div class="w-full lg:w-5/12">
+              <div class="input-card-mep">
+                <div class="card-header-custom-mep">
+                  <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/>
+                  </svg>
+                  Input Drawing
+                </div>
+                <img src="assets/image3.png" alt="MEP Drawing" class="w-full">
+                <div class="card-footer-custom-mep">
+                  <span class="badge-mep bg-blue-mep">DWG/DXF</span>
+                  <span class="badge-mep bg-blue-mep">MEP Layout</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-full lg:w-1/12 text-center">
+              <div class="process-arrow-mep">
+                <div class="arrow-circle-mep">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                  </svg>
+                </div>
+                <div class="process-label-mep">AI Processing</div>
+              </div>
+            </div>
+
+            <div class="w-full lg:w-5/12">
+              <div class="output-card-mep">
+                <div class="card-header-custom-mep">
+                  <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                  </svg>
+                  Quantity Results
+                </div>
+                <div class="quantities-list-mep">
+                  <div class="quantity-row-mep">
+                    <div class="quantity-icon-mep">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                      </svg>
+                    </div>
+                    <div class="quantity-details-mep">
+                      <div class="quantity-name-mep">Pipes</div>
+                      <div class="quantity-value-mep">4,500m</div>
+                    </div>
+                  </div>
+                  <div class="quantity-row-mep">
+                    <div class="quantity-icon-mep">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19h12v2H6v-2zm6-15C8.69 4 6 6.69 6 10h2c0-2.21 1.79-4 4-4s4 1.79 4 4h2c0-3.31-2.69-6-6-6z"/>
+                      </svg>
+                    </div>
+                    <div class="quantity-details-mep">
+                      <div class="quantity-name-mep">Ducts</div>
+                      <div class="quantity-value-mep">4,500m (3 types)</div>
+                    </div>
+                  </div>
+                  <div class="quantity-row-mep">
+                    <div class="quantity-icon-mep">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 8.5H2v6h5.5l3-3-3-3zM16.5 8.5l-3 3 3 3H22v-6h-5.5zM9 16.5V22h6v-5.5l-3-3-3 3z"/>
+                      </svg>
+                    </div>
+                    <div class="quantity-details-mep">
+                      <div class="quantity-name-mep">Cables</div>
+                      <div class="quantity-value-mep">520 units</div>
+                    </div>
+                  </div>
+                  <div class="quantity-row-mep">
+                    <div class="quantity-icon-mep">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
+                      </svg>
+                    </div>
+                    <div class="quantity-details-mep">
+                      <div class="quantity-name-mep">Fixtures</div>
+                      <div class="quantity-value-mep">520 units</div>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn-glow-mep w-full mt-4">
+                  <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                  </svg>
+                  Download Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="architecture-section-mep">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+          <div class="badge-pill-mep mb-3 inline-block">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+            </svg>
+            System Overview
+          </div>
+          <h2 class="section-title-mep">
+            Intelligent
+            <span class="text-gradient-mep">Workflow</span>
+          </h2>
+        </div>
+        <div class="architecture-wrapper-mep">
+          <img src="assets/image2.png" alt="System Architecture" class="w-full">
+        </div>
+      </div>
+    </section>
+
+    <section class="steps-section-mep">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+          <div class="badge-pill-mep mb-3 inline-block">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+            </svg>
+            Simple Process
+          </div>
+          <h2 class="section-title-mep">
+            Get Started in
+            <span class="text-gradient-mep">4 Easy Steps</span>
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="step-box-mep">
+            <div class="step-num-mep">01</div>
+            <h4>Upload Drawing</h4>
+            <p>Upload your MEP engineering drawings in DWG or DXF format</p>
+          </div>
+
+          <div class="step-box-mep">
+            <div class="step-num-mep">02</div>
+            <h4>AI Analysis</h4>
+            <p>Our AI processes and extracts all MEP elements automatically</p>
+          </div>
+
+          <div class="step-box-mep">
+            <div class="step-num-mep">03</div>
+            <h4>Get Report</h4>
+            <p>Receive detailed Excel reports with all quantities categorized</p>
+          </div>
+
+          <div class="step-box-mep">
+            <div class="step-num-mep">04</div>
+            <h4>Review History</h4>
+            <p>Access all previous reports anytime from your dashboard</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="samples-section-mep">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+          <div class="badge-pill-mep mb-3 inline-block">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+            </svg>
+            Supported Formats
+          </div>
+          <h2 class="section-title-mep">
+            Works With All
+            <span class="text-gradient-mep">MEP Drawings</span>
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="sample-box-mep">
+            <img src="assets/image4.png" alt="Electrical Diagram" class="w-full">
+            <div class="sample-overlay-mep">
+              <h5>Electrical Systems</h5>
+              <p>Single line diagrams, distribution boards, cable layouts</p>
+            </div>
+          </div>
+
+          <div class="sample-box-mep">
+            <img src="assets/image5.png" alt="Low Voltage Systems" class="w-full">
+            <div class="sample-overlay-mep">
+              <h5>Low Voltage Systems</h5>
+              <p>Fire alarm, structured cabling, MATV, sound systems</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section-mep">
+      <div class="container mx-auto px-6">
+        <div class="cta-box-mep">
+          <div class="flex flex-wrap items-center gap-8">
+            <div class="w-full lg:w-1/2 mb-4 lg:mb-0">
+              <img src="assets/image6.png" alt="Start Free Trial" class="w-full rounded-4">
+            </div>
+            <div class="w-full lg:w-1/2">
+              <h2 class="text-4xl md:text-5xl font-bold mb-4" style="color: #ffffff;">
+                Ready to Transform Your
+                <span class="text-gradient-mep">Workflow?</span>
+              </h2>
+              <p class="text-lg mb-4" style="color: #e2e8f0;">
+                Start your free trial today. No credit card required.
+              </p>
+              <ul class="cta-list-mep mb-4">
+                <li>
+                  <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  Process up to 5 drawings free
+                </li>
+                <li>
+                  <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  Full access to all features
+                </li>
+                <li>
+                  <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  Expert support included
+                </li>
+                <li>
+                  <svg class="w-5 h-5 inline" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  Cancel anytime
+                </li>
+              </ul>
+              <button class="btn-glow-mep" (click)="openForm()">
+                <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 3l3.057-3L20 12 8.057 24 5 21l9-9z"/>
+                </svg>
+                Start Free Trial
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact-section-mep">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+          <div class="badge-pill-mep mb-3 inline-block">
+            <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            Get In Touch
+          </div>
+          <h2 class="section-title-mep">
+            Request a
+            <span class="text-gradient-mep">Demo</span>
+          </h2>
+        </div>
+
+        <div class="flex justify-center">
+          <div class="w-full lg:w-8/12">
+            <div class="contact-box-mep">
+              <form>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <input type="text" class="form-input-mep" placeholder="Your Name" required>
+                  </div>
+                  <div>
+                    <input type="email" class="form-input-mep" placeholder="Email Address" required>
+                  </div>
+                  <div>
+                    <input type="tel" class="form-input-mep" placeholder="Phone Number" required>
+                  </div>
+                  <div>
+                    <input type="text" class="form-input-mep" placeholder="Company Name" required>
+                  </div>
+                  <div class="md:col-span-2">
+                    <select class="form-input-mep" required>
+                      <option value="">Select Your Role</option>
+                      <option value="mep">MEP Engineer</option>
+                      <option value="qs">Quantity Surveyor</option>
+                      <option value="pm">Project Manager</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="md:col-span-2">
+                    <textarea class="form-input-mep" rows="4" placeholder="Tell us about your project" required></textarea>
+                  </div>
+                  <div class="md:col-span-2">
+                    <button type="submit" class="btn-glow-mep w-full">
+                      <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                      </svg>
+                      Request Demo
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer-mep">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Quick Links</h5>
-            <ul class="space-y-2" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">
-              <li><a href="#">Home</a></li>
-              <li><a href="#services">Services</a></li>
-              <li><a href="#projects">Projects</a></li>
-              <li><a href="#contact">Contact</a></li>
+            <div class="footer-brand-mep">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-black mr-3"
+                style="background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 0 30px rgba(249, 115, 22, 0.4);">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              </div>
+              <span class="font-bold text-xl">
+                MEP<span class="text-gradient-mep">.AI</span>
+              </span>
+            </div>
+            <p class="footer-text-mep">
+              AI-powered MEP quantity take-off system. Fast, accurate, and reliable.
+            </p>
+            <div class="social-links-mep">
+              <a href="#">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+              <a href="#">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+              </a>
+              <a href="#">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+              <a href="#">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h5 class="footer-title-mep">Product</h5>
+            <ul class="footer-links-mep">
+              <li><a href="#features">Features</a></li>
+              <li><a href="#demo">Demo</a></li>
+              <li><a href="#">Pricing</a></li>
+              <li><a href="#">API</a></li>
             </ul>
           </div>
+
           <div>
-            <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Contact</h5>
-            <p [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Phone: +1 234 567 890</p>
-            <p [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Email: info&#64;example.com</p>
+            <h5 class="footer-title-mep">Company</h5>
+            <ul class="footer-links-mep">
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Careers</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Press</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 class="footer-title-mep">Contact</h5>
+            <ul class="footer-contact-mep">
+              <li>
+                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                infomepai.com
+              </li>
+              <li>
+                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+                +20 123 456 7890
+              </li>
+              <li>
+                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                Cairo, Egypt
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div>
-          <h5 class="font-bold mb-3" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">Follow Us</h5>
-          <div class="flex gap-3">
-            <div class="w-10 h-10 rounded flex items-center justify-center"
-              [style.background]="isDarkTheme ? '#1e293b' : '#e2e8f0'"
-              [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">F</div>
-            <div class="w-10 h-10 rounded flex items-center justify-center"
-              [style.background]="isDarkTheme ? '#1e293b' : '#e2e8f0'"
-              [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">T</div>
-            <div class="w-10 h-10 rounded flex items-center justify-center"
-              [style.background]="isDarkTheme ? '#1e293b' : '#e2e8f0'"
-              [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">L</div>
-          </div>
-          <div class="mt-6 text-sm" [style.color]="isDarkTheme ? '#9ca3af' : '#6b7280'">Address: 123 Example St, City,
-            Country</div>
+        <div class="footer-bottom-mep">
+          <p>&copy; 2025 MEP.AI. All rights reserved.</p>
         </div>
       </div>
-
-      <div class="text-center mt-8" [style.color]="isDarkTheme ? '#6b7280' : '#9ca3af'">© 2025 Premium Construction &
-        Engineering. All rights reserved.</div>
     </footer>
   </ng-container>
 
@@ -324,11 +630,6 @@
 
 </div>
 
-
-
-
-
-<!-- Auth Modal -->
 <div class="upload-auth-modal-overlay" *ngIf="showAuthModal" (click)="closeModal()">
   <div class="upload-auth-modal" (click)="$event.stopPropagation()">
     <p class="upload-auth-modal-message">You must log in first to upload files.</p>
