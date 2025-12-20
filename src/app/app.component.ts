@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Subject, BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -16,7 +16,7 @@ import { User } from './interfaces/user.interface';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   title = 'Premium Construction & Engineering';
   menuOpen = false;
   isDarkTheme = false;
@@ -27,11 +27,11 @@ export class AppComponent implements OnInit, OnDestroy {
   showAuthModal: boolean = false;
 
 
-  // استخدام BehaviorSubject مع null كقيمة افتراضية
+  // Using BehaviorSubject with null as default value
   projectCountSubject = new BehaviorSubject<number | null>(null);
   totalFilesCountSubject = new BehaviorSubject<number | null>(null);
 
-  // Observable للـ HTML
+  // Observable for HTML template
   projectCount$ = this.projectCountSubject.asObservable();
   totalFilesCount$ = this.totalFilesCountSubject.asObservable();
 
@@ -51,6 +51,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     document.documentElement.style.scrollBehavior = 'smooth';
+    // Load theme preference from localStorage
+    const savedTheme = localStorage.getItem('darkTheme');
+    if (savedTheme !== null) {
+      this.isDarkTheme = savedTheme === 'true';
+    }
     this.applyTheme();
 
     // Subscribe to authentication state
@@ -109,6 +114,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleTheme() {
     this.isDarkTheme = !this.isDarkTheme;
+    localStorage.setItem('darkTheme', this.isDarkTheme.toString());
     this.applyTheme();
   }
 
@@ -117,20 +123,40 @@ export class AppComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  ngAfterViewInit() {
+    // Apply theme after view is initialized to ensure DOM is ready
+    setTimeout(() => this.applyTheme(), 0);
+  }
+
   applyTheme() {
     const body = document.body;
+    // Try to get the root div element
+    const rootDiv = document.querySelector('.min-h-screen') as HTMLElement;
+    
     if (this.isDarkTheme) {
       body.style.backgroundColor = '#0f172a';
       body.style.color = '#ffffff';
+      if (rootDiv) {
+        rootDiv.classList.remove('light-mode');
+        rootDiv.classList.add('dark-mode');
+      }
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
     } else {
       body.style.backgroundColor = '#f8fafc';
       body.style.color = '#0f172a';
+      if (rootDiv) {
+        rootDiv.classList.remove('dark-mode');
+        rootDiv.classList.add('light-mode');
+      }
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
     }
   }
 
   onFileSelected(file: File) {
     // console.log('File selected:', file.name);
-    // بعد رفع الملف بنجاح، حدث الـ stats
+    // After successful file upload, refresh stats
     this.loadUserStats();
   }
 
@@ -184,7 +210,7 @@ async loadUserStats() {
   const userId = user.id;
 
   try {
-    // تحويل الـ Observable لـ Promise باستخدام lastValueFrom
+    // Convert Observable to Promise using lastValueFrom
     const projectCount = await lastValueFrom(this.uploadService.getFilesCountByProject(userId, 'defaultProject'));
     const filesCount = await lastValueFrom(this.uploadService.getFilesCount(userId));
 
