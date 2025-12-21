@@ -29,6 +29,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
   backupData: any[] = [];
   isSaving: boolean = false; // Add loading state for save operation
   isDownloading: boolean = false; // Add loading state for download
+  isDarkTheme: boolean = false;
 
   private pollingSubscription?: Subscription;
   private maxPollingTime = 600000; // 10 دقايق
@@ -91,6 +92,9 @@ export class FileResultComponent implements OnInit, OnDestroy {
   // }
 
   ngOnInit(): void {
+  // Check dark theme preference
+  this.isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+
   const userStr = localStorage.getItem('CURRENT_USER');
   if (userStr) {
     try {
@@ -111,7 +115,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
     savedData = JSON.parse(savedDataStr);
   } catch (e) {
     console.error('Parse error in lastFileOutput:', e);
-    localStorage.removeItem('lastFileOutput'); // تنظيف بيانات تالفة
+    // localStorage.removeItem('lastFileOutput'); // تنظيف بيانات تالفة
     this.errorMessage = 'Invalid saved file data. Starting fresh polling...';
     this.startPolling();
     return;

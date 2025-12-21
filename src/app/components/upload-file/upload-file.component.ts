@@ -117,6 +117,7 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   submitForm() {
     this.errorMessage = '';
     this.successMessage = '';
+    localStorage.removeItem('lastFileOutput'); // تنظيف بيانات تالفة
 
     if (!this.fileStorage.InputFileData || !(this.fileStorage.InputFileData instanceof File)) {
       this.errorMessage = 'Please select a valid file';

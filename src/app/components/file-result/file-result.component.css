@@ -176,7 +176,7 @@ td {
   text-align: left;
   border-bottom: 1px solid #e8e8e8;
   font-size: 14px;
-  color: #fff;
+  color: #333;
 }
 
 tbody tr {
@@ -279,4 +279,51 @@ tbody tr:last-child td:last-child {
   th, td {
     padding: 10px;
   }
+}
+
+/* =========================================
+   Dark Mode Styles
+   ========================================= */
+.container.dark-mode {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.container.dark-mode .table-container {
+  background-color: #2d2d2d;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.container.dark-mode td {
+  color: #e0e0e0;
+  border-bottom: 1px solid #404040;
+}
+
+.container.dark-mode tbody tr:nth-child(even) {
+  background-color: #363636;
+}
+
+.container.dark-mode tbody tr:hover {
+  background-color: #444;
+}
+
+.container.dark-mode input {
+  background-color: #404040;
+  color: white;
+  border: 1px solid #555;
+}
+
+.container.dark-mode .total-row {
+  background: linear-gradient(90deg, #2c3e50, #34495e);
+  color: white;
+}
+
+.container.dark-mode .table-container td.readonly {
+  background: #2d2d2d;
+}
+
+.container.dark-mode .loading p,
+.container.dark-mode .error p {
+  color: #fff;
 }
