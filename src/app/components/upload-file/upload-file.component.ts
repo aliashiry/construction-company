@@ -16,7 +16,7 @@ import { interval, Subscription } from 'rxjs';
 })
 export class UploadFileComponent implements OnInit, OnDestroy {
   fileStorage: FileStorage = {
-    UserID: 123,
+    UserID: 0,
     ProjectName: '',
     FileName: '',
     InputFileData: null,
