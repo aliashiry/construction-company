@@ -1,11 +1,11 @@
 
-<div class="min-h-screen" [style.background-color]="isDarkTheme ? '#0a0e27' : '#f8fafc'"
-  [style.color]="isDarkTheme ? '#ffffff' : '#0f172a'">
+<div class="min-h-screen" [style.background-color]="themeService.isDarkTheme() ? '#0a0e27' : '#f8fafc'"
+  [style.color]="themeService.isDarkTheme() ? '#ffffff' : '#0f172a'">
 
   <nav *ngIf="!isStandalonePage" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md shadow-md border-b"
     [ngStyle]="{
-      'background-color': isDarkTheme ? 'rgba(10, 14, 39, 0.9)' : 'rgba(255,255,255,0.9)',
-      'border-bottom': isDarkTheme ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'
+      'background-color': themeService.isDarkTheme() ? 'rgba(10, 14, 39, 0.9)' : 'rgba(255,255,255,0.9)',
+      'border-bottom': themeService.isDarkTheme() ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'
     }">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3" *ngIf="!isStandalonePage">
@@ -15,27 +15,27 @@
             <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
         </div>
-        <span class="font-bold text-xl" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
+        <span class="font-bold text-xl" [style.color]="themeService.isDarkTheme() ? '#fff' : '#0f172a'">
           MEP<span style="background: linear-gradient(135deg, #f97316, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.AI</span>
         </span>
       </a>
 
       <div class="hidden md:flex items-center gap-8">
         <a (click)="setActiveTab('home')" href="/" [class.active-tab]="activeTab === 'home'"
-          [style.color]="activeTab === 'home' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
+          [style.color]="activeTab === 'home' ? '#f97316' : (themeService.isDarkTheme() ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Home</a>
         <a (click)="setActiveTab('features')" href="#features" [class.active-tab]="activeTab === 'features'"
-          [style.color]="activeTab === 'features' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
+          [style.color]="activeTab === 'features' ? '#f97316' : (themeService.isDarkTheme() ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Features</a>
         <a (click)="setActiveTab('demo')" href="#demo" [class.active-tab]="activeTab === 'demo'"
-          [style.color]="activeTab === 'demo' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
+          [style.color]="activeTab === 'demo' ? '#f97316' : (themeService.isDarkTheme() ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Demo</a>
         <a (click)="setActiveTab('contact')" href="#contact" [class.active-tab]="activeTab === 'contact'"
-          [style.color]="activeTab === 'contact' ? '#f97316' : (isDarkTheme ? '#e5e7eb' : '#374151')"
+          [style.color]="activeTab === 'contact' ? '#f97316' : (themeService.isDarkTheme() ? '#e5e7eb' : '#374151')"
           class="hover:opacity-80 font-semibold transition-colors">Contact</a>
-        <button (click)="toggleTheme()" class="ml-3 text-sm font-medium"
-          [style.color]="isDarkTheme ? '#e5e7eb' : '#374151'">
-          {{ isDarkTheme ? 'Light Mode' : 'Dark Mode' }}
+        <button (click)="themeService.toggleTheme()" class="ml-3 text-sm font-medium"
+          [style.color]="themeService.isDarkTheme() ? '#e5e7eb' : '#374151'">
+          {{ themeService.isDarkTheme() ? 'Light Mode' : 'Dark Mode' }}
         </button>
         <a *ngIf="!isLoggedIn" routerLink="/login"
           class="ml-3 text-white font-bold px-6 py-3 rounded-full border-none transition"
@@ -47,12 +47,12 @@
             style="background: linear-gradient(135deg, #f97316, #ea580c);">
             {{ getUserInitials() }}
           </div>
-          <span class="font-semibold" [style.color]="isDarkTheme ? '#fff' : '#0f172a'">{{ currentUser?.name }}</span>
+          <span class="font-semibold" [style.color]="themeService.isDarkTheme() ? '#fff' : '#0f172a'">{{ currentUser?.name }}</span>
         </div>
       </div>
 
       <button class="md:hidden p-2" (click)="toggleMenu()" aria-label="Toggle menu"
-        [style.color]="isDarkTheme ? '#fff' : '#0f172a'">
+        [style.color]="themeService.isDarkTheme() ? '#fff' : '#0f172a'">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -63,16 +63,16 @@
       <div class="flex flex-col gap-3">
         <a href="/" (click)="setActiveTab('home'); toggleMenu()"
           class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'home' ? '#f97316' : 'transparent'"
-          [style.color]="activeTab === 'home' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Home</a>
+          [style.color]="activeTab === 'home' ? '#fff' : (themeService.isDarkTheme() ? '#e5e7eb' : '#0f172a')">Home</a>
         <a href="#features" (click)="setActiveTab('features'); toggleMenu()"
           class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'features' ? '#f97316' : 'transparent'"
-          [style.color]="activeTab === 'features' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Features</a>
+          [style.color]="activeTab === 'features' ? '#fff' : (themeService.isDarkTheme() ? '#e5e7eb' : '#0f172a')">Features</a>
         <a href="#demo" (click)="setActiveTab('demo'); toggleMenu()"
           class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'demo' ? '#f97316' : 'transparent'"
-          [style.color]="activeTab === 'demo' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Demo</a>
+          [style.color]="activeTab === 'demo' ? '#fff' : (themeService.isDarkTheme() ? '#e5e7eb' : '#0f172a')">Demo</a>
         <a href="#contact" (click)="setActiveTab('contact'); toggleMenu()"
           class="block py-3 px-4 rounded hover:bg-slate-100" [style.background]="activeTab === 'contact' ? '#f97316' : 'transparent'"
-          [style.color]="activeTab === 'contact' ? '#fff' : (isDarkTheme ? '#e5e7eb' : '#0f172a')">Contact</a>
+          [style.color]="activeTab === 'contact' ? '#fff' : (themeService.isDarkTheme() ? '#e5e7eb' : '#0f172a')">Contact</a>
         <a *ngIf="!isLoggedIn" routerLink="/login" (click)="toggleMenu()"
           class="block py-3 px-4 rounded text-center font-bold text-white"
           style="background: linear-gradient(135deg, #f97316, #ea580c);">Start Free Trial</a>

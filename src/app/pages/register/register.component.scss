@@ -1,3 +1,42 @@
+:host-context(.dark-mode) .register-page {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+:host-context(.dark-mode) .register-card {
+  background: #1e293b;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+:host-context(.dark-mode) .register-title {
+  color: #f1f5f9;
+}
+
+:host-context(.dark-mode) .register-field label {
+  color: #94a3b8;
+}
+
+:host-context(.dark-mode) .register-field input {
+  background: #2d3748;
+  border-color: #4a5568;
+  color: #f1f5f9;
+}
+
+:host-context(.dark-mode) .register-field input::placeholder {
+  color: #718096;
+}
+
+:host-context(.dark-mode) .register-field input:focus {
+  border-color: #f97316;
+}
+
+:host-context(.dark-mode) .register-footer {
+  color: #94a3b8;
+}
+
+:host-context(.dark-mode) .register-footer a {
+  color: #fb923c;
+}
+
 .register-page {
   min-height: 100vh;
   display: flex;

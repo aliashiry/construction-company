@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { Subject, BehaviorSubject, lastValueFrom } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -6,86 +6,82 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { UploadCenterComponent } from './components/upload-center/upload-center.component';
 import { AuthService } from './services/auth.service';
-import { UploadService} from './services/upload.service';
+import { UploadService } from './services/upload.service';
 import { User } from './interfaces/user.interface';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, UploadCenterComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Premium Construction & Engineering';
   menuOpen = false;
-  isDarkTheme = false;
   isStandalonePage = false;
   currentUser: User | null = null;
   isLoggedIn = false;
   activeTab: string = 'home';
   showAuthModal: boolean = false;
 
-
-  // Using BehaviorSubject with null as default value
   projectCountSubject = new BehaviorSubject<number | null>(null);
   totalFilesCountSubject = new BehaviorSubject<number | null>(null);
 
-  // Observable for HTML template
   projectCount$ = this.projectCountSubject.asObservable();
   totalFilesCount$ = this.totalFilesCountSubject.asObservable();
 
   private readonly destroy$ = new Subject<void>();
 
   constructor(
-    private router: Router, 
-    private authService: AuthService, 
-    private uploadService: UploadService
+    private router: Router,
+    private authService: AuthService,
+    private uploadService: UploadService,
+    public themeService: ThemeService
   ) {
     let initPath = this.router.url || location.pathname || '';
     initPath = initPath.split('#').pop() || initPath;
     initPath = initPath.split('?')[0];
-    this.isStandalonePage = /^\/?(login|register|profile|upload|file-result|history|error|workon)(\/|$)/i.test(initPath);
+    this.isStandalonePage =
+      /^\/?(login|register|profile|upload|file-result|history|error|workon)(\/|$)/i.test(
+        initPath
+      );
     this.updateActiveTab(initPath);
   }
 
   ngOnInit() {
     document.documentElement.style.scrollBehavior = 'smooth';
-    // Load theme preference from localStorage
-    const savedTheme = localStorage.getItem('darkTheme');
-    if (savedTheme !== null) {
-      this.isDarkTheme = savedTheme === 'true';
-    }
-    this.applyTheme();
 
-    // Subscribe to authentication state
-    this.authService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      this.currentUser = user;
-      this.isLoggedIn = !!user;
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.currentUser = user;
+        this.isLoggedIn = !!user;
 
-      if (this.isLoggedIn) {
-        this.refreshStats();
-        // refreshStats
-      } else {
-        this.projectCountSubject.next(null);
-        this.totalFilesCountSubject.next(null);
-      }
-    });
+        if (this.isLoggedIn) {
+          this.refreshStats();
+        } else {
+          this.projectCountSubject.next(null);
+          this.totalFilesCountSubject.next(null);
+        }
+      });
 
-    // Track route changes
-    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
       if (event instanceof NavigationEnd) {
         let path = event.urlAfterRedirects || event.url;
         if (!path) path = location.pathname || '';
         path = path.split('#').pop() || path;
         path = path.split('?')[0];
-        const standalone = /^\/?(login|register|profile|upload|file-result|history|error|workon)(\/|$)/i.test(path);
+        const standalone =
+          /^\/?(login|register|profile|upload|file-result|history|error|workon)(\/|$)/i.test(
+            path
+          );
         this.isStandalonePage = standalone;
         this.updateActiveTab(path);
       }
     });
 
-    // Initialize stats for page load
     const userStr = localStorage.getItem('CURRENT_USER');
     if (userStr) {
       this.loadUserStats();
@@ -112,51 +108,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     this.menuOpen = !this.menuOpen;
   }
 
-  toggleTheme() {
-    this.isDarkTheme = !this.isDarkTheme;
-    localStorage.setItem('darkTheme', this.isDarkTheme.toString());
-    this.applyTheme();
-  }
-
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  ngAfterViewInit() {
-    // Apply theme after view is initialized to ensure DOM is ready
-    setTimeout(() => this.applyTheme(), 0);
-  }
-
-  applyTheme() {
-    const body = document.body;
-    // Try to get the root div element
-    const rootDiv = document.querySelector('.min-h-screen') as HTMLElement;
-    
-    if (this.isDarkTheme) {
-      body.style.backgroundColor = '#0f172a';
-      body.style.color = '#ffffff';
-      if (rootDiv) {
-        rootDiv.classList.remove('light-mode');
-        rootDiv.classList.add('dark-mode');
-      }
-      body.classList.remove('light-mode');
-      body.classList.add('dark-mode');
-    } else {
-      body.style.backgroundColor = '#f8fafc';
-      body.style.color = '#0f172a';
-      if (rootDiv) {
-        rootDiv.classList.remove('dark-mode');
-        rootDiv.classList.add('light-mode');
-      }
-      body.classList.remove('dark-mode');
-      body.classList.add('light-mode');
-    }
-  }
-
   onFileSelected(file: File) {
-    // console.log('File selected:', file.name);
-    // After successful file upload, refresh stats
     this.loadUserStats();
   }
 
@@ -196,36 +153,36 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     return this.currentUser.name[0].toUpperCase();
   }
-// Load stats and update subjects
-async loadUserStats() {
-  const userStr = localStorage.getItem('CURRENT_USER');
-  if (!userStr) {
-    console.error('No user logged in.');
-    this.projectCountSubject.next(0);
-    this.totalFilesCountSubject.next(0);
-    return;
+  async loadUserStats() {
+    const userStr = localStorage.getItem('CURRENT_USER');
+    if (!userStr) {
+      console.error('No user logged in.');
+      this.projectCountSubject.next(0);
+      this.totalFilesCountSubject.next(0);
+      return;
+    }
+
+    const user = JSON.parse(userStr);
+    const userId = user.id;
+
+    try {
+      const projectCount = await lastValueFrom(
+        this.uploadService.getFilesCountByProject(userId, 'defaultProject')
+      );
+      const filesCount = await lastValueFrom(
+        this.uploadService.getFilesCount(userId)
+      );
+
+      this.projectCountSubject.next(projectCount ?? 0);
+      this.totalFilesCountSubject.next(filesCount ?? 0);
+    } catch (err) {
+      console.error('Error fetching user stats:', err);
+      this.projectCountSubject.next(0);
+      this.totalFilesCountSubject.next(0);
+    }
   }
 
-  const user = JSON.parse(userStr);
-  const userId = user.id;
-
-  try {
-    // Convert Observable to Promise using lastValueFrom
-    const projectCount = await lastValueFrom(this.uploadService.getFilesCountByProject(userId, 'defaultProject'));
-    const filesCount = await lastValueFrom(this.uploadService.getFilesCount(userId));
-
-    this.projectCountSubject.next(projectCount ?? 0);
-    this.totalFilesCountSubject.next(filesCount ?? 0);
-  } catch (err) {
-    console.error('Error fetching user stats:', err);
-    this.projectCountSubject.next(0);
-    this.totalFilesCountSubject.next(0);
+  refreshStats() {
+    this.loadUserStats().then(() => {});
   }
 }
-
-refreshStats() {
-  this.loadUserStats().then(() => {
-    // console.log('Project count:', this.projectCountSubject.value);
-    // console.log('Total files count:', this.totalFilesCountSubject.value);
-  });
-}}

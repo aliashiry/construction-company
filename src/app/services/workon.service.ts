@@ -1,56 +1,128 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API } from '../constants/app.constants';
+import { WorkerData, FileDataFromAPI } from '../interfaces/FileStorage';
 
 @Injectable({ providedIn: 'root' })
 export class WorkOnService {
-  private base = `${API.BASE_URL}/WorkerOn`;
+  private readonly API_URL = `${API.BASE_URL}/workeron`;
 
   constructor(private http: HttpClient) {}
 
-  getManagersForWorker(projectName: string, userId: number): Observable<any> {
-    const params = new HttpParams().set('userid', userId.toString());
-    return this.http.get<any>(`${this.base}/manager/${encodeURIComponent(projectName)}`, { params });
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('AUTH_TOKEN') || '';
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
   }
 
   /**
-   * Edit output file - saves the edited CSV back to the server
-   * POST /api/WorkerOn/editoutputfile
-   * Expects FormData with:
-   * - userId (number)
-   * - ManagerID (number) 
-   * - ProjectName (string)
-   * - FileName (string)
-   * - OutputFile (Blob - the CSV file)
+   * GET /api/workeron/workers?managerId={id}
+   * كل العمال المسندين للمدير
    */
-  editOutputFile(fileData: {
-    userId: number;
-    managerID: number;
+  getWorkersForManager(managerId: number): Observable<any> {
+    const params = new HttpParams().set('managerId', managerId.toString());
+    return this.http.get<any>(
+      `${this.API_URL}/workers`,
+      { headers: this.getHeaders(), params }
+    );
+  }
+
+  /**
+   * GET /api/workeron?userId={id}
+   * كل المشاريع والملفات المسندة للعامل تحت جميع المديرين
+   */
+  getWorkerProjects(userId: number): Observable<any> {
+    const params = new HttpParams().set('userId', userId.toString());
+    return this.http.get<any>(
+      `${this.API_URL}`,
+      { headers: this.getHeaders(), params }
+    );
+  }
+
+  /**
+   * GET /api/workeron/assign/MyFiles/{userId}
+   * الملفات المسندة للعامل من مشاريع لا يديرها
+   */
+  getWorkerAssignedFiles(userId: number): Observable<FileDataFromAPI[]> {
+    return this.http.get<FileDataFromAPI[]>(
+      `${this.API_URL}/assign/MyFiles/${userId}`,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  /**
+   * GET /api/workeron/manager/{projectName}?userid={id}
+   * معلومات المديرين للمشروع
+   */
+  getProjectManagers(projectName: string, userId: number): Observable<any[]> {
+    const params = new HttpParams().set('userid', userId.toString());
+    return this.http.get<any[]>(
+      `${this.API_URL}/manager/${encodeURIComponent(projectName)}`,
+      { headers: this.getHeaders(), params }
+    );
+  }
+
+  /**
+   * POST /api/workeron/addworker
+   * إضافة عامل للمشروع
+   */
+  addWorkerByEmail(data: {
+    useremail: string;
+    managerId: number;
+    projectName: string;
+  }): Observable<any> {
+    return this.http.post<any>(
+      `${this.API_URL}/addworker`,
+      data,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  /**
+   * DELETE /api/workeron/rmworker
+   * إزالة عامل من المشروع
+   */
+  removeWorkerByEmail(data: {
+    workerEmail: string;
+    managerId: number;
+    projectName: string;
+  }): Observable<any> {
+    return this.http.delete<any>(
+      `${this.API_URL}/rmworker`,
+      { 
+        headers: this.getHeaders(),
+        body: data
+      }
+    );
+  }
+
+  /**
+   * POST /api/workeron/editoutputfile
+   * تحديث ملف الإخراج
+   */
+  editOutputFile(data: {
+    managerId: number;
     projectName: string;
     fileName: string;
-    outputFileData?: Blob;
+    outputFile: Blob;
   }): Observable<any> {
-    const fd = new FormData();
-    
-    // Clean and validate data
-    const userId = fileData.userId;
-    const managerId = fileData.managerID;
-    const projectName = fileData.projectName.trim();
-    const fileName = fileData.fileName.trim();
+    const formData = new FormData();
+    formData.append('managerId', data.managerId.toString());
+    formData.append('projectName', data.projectName);
+    formData.append('fileName', data.fileName);
+    formData.append('outputFile', data.outputFile);
 
-    console.log('📤 editOutputFile called with:', { userId, managerId, projectName, fileName });
-
-    fd.append('UserId', userId.toString());
-    fd.append('ManagerID', managerId.toString());
-    fd.append('ProjectName', projectName);
-    fd.append('FileName', fileName);
-    
-    if (fileData.outputFileData) {
-      fd.append('OutputFile', fileData.outputFileData, `${fileName}_output.csv`);
-      console.log('📦 File appended to FormData');
-    }
-
-    return this.http.post(`${this.base}/editoutputfile`, fd);
+    return this.http.post<any>(
+      `${this.API_URL}/editoutputfile`,
+      formData,
+      { 
+        headers: new HttpHeaders({
+          'Authorization': `Bearer ${localStorage.getItem('AUTH_TOKEN') || ''}`
+        })
+      }
+    );
   }
 }

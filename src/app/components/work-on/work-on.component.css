@@ -1292,57 +1292,110 @@ display: inline-flex;
   font-size: 1.125rem;
 }
 
-/* Responsive Design */
-@media (max-width: 1400px) {
-  .history-table {
-    font-size: 0.9rem;
-  }
-
-  .download-btn {
-    max-width: 240px;
-  }
+/* ==================== Workers Grid ==================== */
+.workers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
-@media (max-width: 1024px) {
-  .history-container {
-    padding: 1.5rem;
-  }
-
-  .history-table {
-    min-width: 1000px;
-  }
+.worker-card {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-@media (max-width: 768px) {
-  .history-container {
-    padding: 1rem;
-  }
+.dark-mode .worker-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+}
 
-  .history-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
+.worker-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.15);
+}
 
-  .history-title {
-    font-size: 1.75rem;
-  }
+.worker-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+  color: white;
+  margin: 0 auto 1rem;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
 
-  .refresh-btn {
-    width: 100%;
-    justify-content: center;
-  }
+.worker-info h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
 
-  .history-table th,
-  .history-table td {
-    padding: 0.875rem 1rem;
-    font-size: 0.8125rem;
-  }
+.dark-mode .worker-info h3 {
+  color: white;
+}
 
-  .download-btn {
-    padding: 0.625rem 1rem;
-    font-size: 0.8125rem;
-  }
+.worker-role {
+  color: #f97316;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.worker-project {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0 0 1rem 0;
+}
+
+.dark-mode .worker-project {
+  color: #94a3b8;
+}
+
+.worker-meta {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.dark-mode .worker-meta {
+  border-top-color: rgba(249, 115, 22, 0.2);
+}
+
+.btn-delete {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delete svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-delete:hover {
+  background: #ef4444;
+  color: white;
 }
 
 /* ==================== Modal ==================== */
@@ -1645,4 +1698,224 @@ display: inline-flex;
 .dark-mode .project-card .worker-badge {
   background: #312e81;
   color: #c7d2fe;
+}
+
+/* ==================== Workers List (New Compact Design) ==================== */
+.workers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.worker-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  border-left: 4px solid #f97316;
+}
+
+.dark-mode .worker-item {
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-left: 4px solid #f97316;
+}
+
+.worker-item:hover {
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.12);
+  transform: translateX(4px);
+}
+
+.worker-avatar-small {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.worker-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.worker-details h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
+
+.dark-mode .worker-details h4 {
+  color: white;
+}
+
+.worker-project-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.dark-mode .worker-project-text {
+  color: #94a3b8;
+}
+
+.worker-date-text {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.dark-mode .worker-date-text {
+  color: #64748b;
+}
+
+.btn-delete-small {
+  padding: 0.4rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 6px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-small svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-delete-small:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ==================== Workers Grid Compact ==================== */
+.workers-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.worker-card-compact {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(249, 115, 22, 0.1);
+  text-align: center;
+}
+
+.dark-mode .worker-card-compact {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.worker-card-compact:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.4);
+}
+
+.worker-avatar-compact {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.25);
+}
+
+.worker-info-compact {
+  width: 100%;
+  min-width: 0;
+}
+
+.worker-info-compact h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.35rem 0;
+  word-break: break-word;
+}
+
+.dark-mode .worker-info-compact h4 {
+  color: white;
+}
+
+.worker-info-compact .project-name {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+}
+
+.dark-mode .worker-info-compact .project-name {
+  color: #94a3b8;
+}
+
+.worker-info-compact .assigned-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.dark-mode .worker-info-compact .assigned-date {
+  color: #64748b;
+}
+
+.btn-remove-worker {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.35rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 6px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove-worker svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-remove-worker:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.15);
 }

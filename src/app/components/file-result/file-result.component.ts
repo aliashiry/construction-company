@@ -43,53 +43,114 @@ export class FileResultComponent implements OnInit, OnDestroy {
     private uploadService: UploadService
   ) { }
 
-  ngOnInit(): void {
-    const userStr = localStorage.getItem('CURRENT_USER');
-    if (userStr) {
-      try {
-        const u = JSON.parse(userStr);
-        this.currentUserId = u?.id ? Number(u.id) : null;
-      } catch { this.currentUserId = null; }
-    }
+  // ngOnInit(): void {
+  //   const userStr = localStorage.getItem('CURRENT_USER');
+  //   if (userStr) {
+  //     try {
+  //       const u = JSON.parse(userStr);
+  //       this.currentUserId = u?.id ? Number(u.id) : null;
+  //     } catch { this.currentUserId = null; }
+  //   }
 
-    // try to load from localStorage first (if coming from history)
-    const savedDataStr = localStorage.getItem('lastFileOutput');
-    if (savedDataStr) {
-      try {
-        const savedData = JSON.parse(savedDataStr);
+  //   // try to load from localStorage first (if coming from history)
+  //   const savedDataStr = localStorage.getItem('lastFileOutput');
+  //   if (savedDataStr) {
+  //     try {
+  //       const savedData = JSON.parse(savedDataStr);
         
-        // check if fileBase64 is already present (from history)
-        if (savedData.fileBase64) {
-          this.projectName = savedData.projectName?.toString().trim() || '';
-          this.fileName = savedData.fileName?.toString().trim() || '';
+  //       // check if fileBase64 is already present (from history)
+  //       if (savedData.fileBase64) {
+  //         this.projectName = savedData.projectName?.toString().trim() || '';
+  //         this.fileName = savedData.fileName?.toString().trim() || '';
           
-          if (!this.projectName) {
-            this.errorMessage = 'Project name is empty or invalid. Please re-upload the file.';
-            this.isLoading = false;
-            return;
-          }
+  //         if (!this.projectName) {
+  //           this.errorMessage = 'Project name is empty or invalid. Please re-upload the file.';
+  //           this.isLoading = false;
+  //           return;
+  //         }
           
-          this.done = true;
-          this.isLoading = true;
-          this.message = 'Loading file data...';
+  //         this.done = true;
+  //         this.isLoading = true;
+  //         this.message = 'Loading file data...';
 
-          // process the base64 data directly
-          this.processBase64ToCsv(savedData.fileBase64);
-          this.message = 'File loaded successfully!';
-          this.isLoading = false;
-        } else {
-          // no base64, start polling
-          this.startPolling();
-        }
-      } catch (e) {
-        this.startPolling();
-      }
-    } else {
-      // no data in localStorage, start polling
-      this.startPolling();
-    }
+  //         // process the base64 data directly
+  //         this.processBase64ToCsv(savedData.fileBase64);
+  //         this.message = 'File loaded successfully!';
+  //         this.isLoading = false;
+  //       } else {
+  //         // no base64, start polling
+  //         this.startPolling();
+  //       }
+  //     } catch (e) {
+  //       this.startPolling();
+  //     }
+  //   } else {
+  //     // no data in localStorage, start polling
+  //     this.startPolling();
+  //   }
+  // }
+
+  ngOnInit(): void {
+  const userStr = localStorage.getItem('CURRENT_USER');
+  if (userStr) {
+    try {
+      const u = JSON.parse(userStr);
+      this.currentUserId = u?.id ? Number(u.id) : null;
+    } catch { this.currentUserId = null; }
   }
 
+  const savedDataStr = localStorage.getItem('lastFileOutput');
+  if (!savedDataStr) {
+    this.errorMessage = 'No file data found. Please upload a file first.';
+    this.isLoading = false;
+    return;
+  }
+
+  let savedData: any;
+  try {
+    savedData = JSON.parse(savedDataStr);
+  } catch (e) {
+    console.error('Parse error in lastFileOutput:', e);
+    localStorage.removeItem('lastFileOutput'); // تنظيف بيانات تالفة
+    this.errorMessage = 'Invalid saved file data. Starting fresh polling...';
+    this.startPolling();
+    return;
+  }
+
+  // تنظيف البيانات
+  this.projectName = savedData.projectName?.toString().trim() || '';
+  this.fileName = savedData.fileName?.toString().trim() || '';
+  const userId = savedData.userId || this.currentUserId;
+
+  if (!this.projectName || !this.fileName) {
+    this.errorMessage = 'Project or file name missing.';
+    this.isLoading = false;
+    return;
+  }
+
+  // 1. حالة الـ History: نجيب من السيرفر مباشرة
+  if (savedData.fromHistory || this.uploadService.getFileStorage()?.InputFileData === null) {
+    this.message = 'Loading file from history...';
+    this.isLoading = true;
+
+    this.fetchOutputFile(userId, this.projectName, this.fileName);
+    return;
+  }
+
+  // 2. حالة فيها base64 محفوظ → نعرض فورًا من الـ cache
+  if (savedData.fileBase64) {
+    this.message = 'Loading saved file data...';
+    this.isLoading = true;
+    this.processBase64ToCsv(savedData.fileBase64);
+    this.message = 'File loaded successfully!';
+    this.done = true;
+    this.isLoading = false;
+    return;
+  }
+
+  // 3. كل الحالات الأخرى: ملف جديد → polling
+  this.startPolling();
+}
   ngOnDestroy(): void {
     if (this.pollingSubscription) {
       this.pollingSubscription.unsubscribe();
@@ -187,7 +248,7 @@ export class FileResultComponent implements OnInit, OnDestroy {
     this.message = 'Loading file data...';
     this.errorMessage = '';
 
-    this.uploadService.getOutputFileBase64(userId, projectName, fileName)
+    this.uploadService.getOutputFile(userId, projectName, fileName)
       .subscribe({
         next: (res: any) => {
           if (res?.fileBase64 || res?.FileBase64) {

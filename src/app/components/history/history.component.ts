@@ -417,6 +417,15 @@ export class HistoryComponent implements OnInit, OnDestroy {
    * Used in HTML: (click)="viewFileResult(file)"
    */
   viewFileResult(file: FileDataFromAPI) {
+    // Save file info to localStorage so FileResultComponent can read it
+    const fileInfo = {
+      userId: this.currentUserID,
+      projectName: file.projectName,
+      fileName: file.fileName,
+      fromHistory: true
+    };
+    localStorage.setItem('lastFileOutput', JSON.stringify(fileInfo));
+
     // Navigate to file-result with file data
     this.uploadService.setFileStorage({
       UserID: this.currentUserID,
