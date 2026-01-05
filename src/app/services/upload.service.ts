@@ -43,7 +43,7 @@ export class UploadService {
       projectName: fileStorage.ProjectName,
       fileName: fileStorage.FileName,
       notes: fileStorage.Notes || '',
-      forwardUrl:`https://hetask15.app.n8n.cloud/webhook/upload-file-dxf`
+      // forwardUrl:`https://hetask15.app.n8n.cloud/webhook/upload-file-dxf`
     });
 
     return this.http.post(`${this.API_BASE_URL}/input?${params.toString()}`, formData);
